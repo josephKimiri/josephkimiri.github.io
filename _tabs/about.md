@@ -4,7 +4,7 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-![Profile Picture](/assets/img/logo/avatar.jpg)
+![Profile Picture](/assets/img/logo/avatar.png)
 
 Hello, I'm Joseph Kimiri! <!-- Replace with your name -->
 I'm a passionate Cyber Security Analyst, Bug Bounty Hunter and Pentester based in Machakos Kenya. <!-- Replace with your profession or interests and location -->
