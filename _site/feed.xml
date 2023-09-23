@@ -1,0 +1,271 @@
+
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>http://localhost:4000/</id>
+  <title>JosephKimiri's Blog</title>
+  <subtitle>My name is Joseph Kimiri, a passionate individual immersed in the world of cybersecurity. As a CTF player, I thrive in the challenge of hacking, defending, and analyzing computer systems and networks. With a bug bounty hunter mindset, I actively seek out vulnerabilities in software, websites, and applications, helping organizations strengthen their security posture. Armed with my expertise in penetration testing, I conduct thorough assessments, pinpointing weaknesses and providing recommendations for fortifying defenses. In the realm of cybersecurity, I am a relentless protector of digital assets, dedicated to ensuring safety and preserving integrity.</subtitle>
+  <updated>2023-09-23T22:54:03+03:00</updated>
+  <author>
+    <name>Joseph Kimiri</name>
+    <uri>http://localhost:4000/</uri>
+  </author>
+  <link rel="self" type="application/atom+xml" href="http://localhost:4000/feed.xml"/>
+  <link rel="alternate" type="text/html" hreflang="en"
+    href="http://localhost:4000/"/>
+  <generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator>
+  <rights> © 2023 Joseph Kimiri </rights>
+  <icon>/assets/img/favicons/favicon.ico</icon>
+  <logo>/assets/img/favicons/favicon-96x96.png</logo>
+
+
+  
+  <entry>
+    <title>Multilingual</title>
+    <link href="http://localhost:4000/posts/multilingual/" rel="alternate" type="text/html" title="Multilingual" />
+    <published>2023-09-23T22:27:00+03:00</published>
+  
+    <updated>2023-09-23T22:27:00+03:00</updated>
+  
+    <id>http://localhost:4000/posts/multilingual/</id>
+    <content src="http://localhost:4000/posts/multilingual/" />
+    <author>
+      <name>josephkimiri</name>
+    </author>
+
+  
+    
+    <category term="CTFs" />
+    
+    <category term="Web" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      SheHacks Intervarsity CTF
+
+Over the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya 
+whith my school’s CTF team @Dumb31d0r3
+
+
+I and my team solved some few challenges and we had fun playing and learning.
+
+I’ll take you through some of the challenges we solved.
+
+Android
+Multilingual
+The first challenge was called Multilingual and was pretty easy.
+
+I c...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>Secured Notes</title>
+    <link href="http://localhost:4000/posts/Secured-Notes/" rel="alternate" type="text/html" title="Secured Notes" />
+    <published>2023-09-23T22:27:00+03:00</published>
+  
+    <updated>2023-09-23T22:27:00+03:00</updated>
+  
+    <id>http://localhost:4000/posts/Secured-Notes/</id>
+    <content src="http://localhost:4000/posts/Secured-Notes/" />
+    <author>
+      <name>josephkimiri</name>
+    </author>
+
+  
+    
+    <category term="CTFs" />
+    
+    <category term="Web" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      Secured Notes
+I created an application to retrieve my secrets. Is it realy secured?
+SecuredNotes.apk
+
+Solution
+Here, we were given an apkfile and we were tasked into finding whether the app was handling secrets well. 
+I decompiled the app using apktool using the command apktool d SecuredNotes.apk
+
+
+
+I then went into the folder containing the application and grepped for the key words secret &amp;amp...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>Graph1</title>
+    <link href="http://localhost:4000/posts/Graph1/" rel="alternate" type="text/html" title="Graph1" />
+    <published>2023-09-23T22:27:00+03:00</published>
+  
+    <updated>2023-09-23T22:27:00+03:00</updated>
+  
+    <id>http://localhost:4000/posts/Graph1/</id>
+    <content src="http://localhost:4000/posts/Graph1/" />
+    <author>
+      <name>josephkimiri</name>
+    </author>
+
+  
+    
+    <category term="CTFs" />
+    
+    <category term="Web" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      Web
+
+For the web challenges, I solved one challenge by the name Graph1.
+
+Graph1
+We are given a link and told to find the flag.
+
+I was happy I had an opportunity to learn how graphql works. You can learn more about graphql testing here
+
+We start by visiting the link and we get the following page that says graphql is running.
+
+
+
+Playing with the graphql api, we got interesting responses.
+
+
+
+I the...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>Pico CTF (ReadMyCert)</title>
+    <link href="http://localhost:4000/posts/readmycert/" rel="alternate" type="text/html" title="Pico CTF (ReadMyCert)" />
+    <published>2023-05-14T18:33:00+03:00</published>
+  
+    <updated>2023-05-14T18:33:00+03:00</updated>
+  
+    <id>http://localhost:4000/posts/readmycert/</id>
+    <content src="http://localhost:4000/posts/readmycert/" />
+    <author>
+      <name>josephkimiri</name>
+    </author>
+
+  
+    
+    <category term="CTFs" />
+    
+    <category term="Cryptography" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      ReadMyCert
+
+AUTHOR: SUNDAY JACOB NWANYIM
+
+Description
+How about we take you on an adventure on exploring certificate signing requests
+Take a look at this CSR file here
+
+Solution
+
+In this challenge, we shall learn how to read CSR(certificate signing requests) using openssl
+OpenSSL is a widely-used cryptographic library that includes a command-line tool for working with CSRs.
+Let’s solve this cha...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>Pico CTF (HideToSee)</title>
+    <link href="http://localhost:4000/posts/HideToSee/" rel="alternate" type="text/html" title="Pico CTF (HideToSee)" />
+    <published>2023-05-14T10:46:00+03:00</published>
+  
+    <updated>2023-05-14T10:46:00+03:00</updated>
+  
+    <id>http://localhost:4000/posts/HideToSee/</id>
+    <content src="http://localhost:4000/posts/HideToSee/" />
+    <author>
+      <name>josephkimiri</name>
+    </author>
+
+  
+    
+    <category term="CTFs" />
+    
+    <category term="Cryptography" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      HideToSee
+
+AUTHOR: SUNDAY JACOB NWANYIM
+
+Description
+How about some hide and seek heh?
+Look at this image here.
+
+Solution
+
+This challenge was tricky as it required some forensics and then understanding atbash cipher.
+Let’s get started, shall we?
+
+  Download the given image.
+  As I said, this challenge required some forensics skills.
+  Since the hint said we extract the image, I went to my foren...
+    </summary>
+  
+
+  </entry>
+
+</feed>
+
+
