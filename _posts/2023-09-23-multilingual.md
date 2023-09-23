@@ -11,7 +11,7 @@ image: /assets/img/blog/multi.png
 # SheHacks Intervarsity CTF
 
 Over the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya 
-whith my school's CTF team @Dumb31d0r3
+whith my school's CTF team @DDumb1d0r3♾️🟰♾️
 
 ![image](https://user-images.githubusercontent.com/98275198/270124581-f07bcdb0-aecb-4667-a1b3-99a28083c024.png)
 I and my team solved some few challenges and we had fun playing and learning.
