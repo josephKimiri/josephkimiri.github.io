@@ -4,7 +4,7 @@
   <id>http://localhost:4000/</id>
   <title>JosephKimiri's Blog</title>
   <subtitle>My name is Joseph Kimiri, a passionate individual immersed in the world of cybersecurity. As a CTF player, I thrive in the challenge of hacking, defending, and analyzing computer systems and networks. With a bug bounty hunter mindset, I actively seek out vulnerabilities in software, websites, and applications, helping organizations strengthen their security posture. Armed with my expertise in penetration testing, I conduct thorough assessments, pinpointing weaknesses and providing recommendations for fortifying defenses. In the realm of cybersecurity, I am a relentless protector of digital assets, dedicated to ensuring safety and preserving integrity.</subtitle>
-  <updated>2023-09-23T22:54:03+03:00</updated>
+  <updated>2024-11-12T18:11:50+03:00</updated>
   <author>
     <name>Joseph Kimiri</name>
     <uri>http://localhost:4000/</uri>
@@ -12,11 +12,52 @@
   <link rel="self" type="application/atom+xml" href="http://localhost:4000/feed.xml"/>
   <link rel="alternate" type="text/html" hreflang="en"
     href="http://localhost:4000/"/>
-  <generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator>
-  <rights> © 2023 Joseph Kimiri </rights>
+  <generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator>
+  <rights> © 2024 Joseph Kimiri </rights>
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>Exploiting exposed SVN folder for Account Takeover</title>
+    <link href="http://localhost:4000/posts/svn/" rel="alternate" type="text/html" title="Exploiting exposed SVN folder for Account Takeover" />
+    <published>2024-03-17T21:11:00+03:00</published>
+  
+    <updated>2024-03-17T21:11:00+03:00</updated>
+  
+    <id>http://localhost:4000/posts/svn/</id>
+    <content src="http://localhost:4000/posts/svn/" />
+    <author>
+      <name>josephkimiri</name>
+    </author>
+
+  
+    
+    <category term="Bugbounty" />
+    
+    <category term="Web" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeover
+
+What is Subversion?
+
+
+Subversion, often referred to as SVN, is a centralized version control system that was initially released in 2000. It is developed and maintained by the web server software platform Apache. Unlike Git, which operates on a distributed model, SVN functions as a centralized system and is also op...
+    </summary>
+  
+
+  </entry>
 
   
   <entry>
@@ -24,7 +65,7 @@
     <link href="http://localhost:4000/posts/multilingual/" rel="alternate" type="text/html" title="Multilingual" />
     <published>2023-09-23T22:27:00+03:00</published>
   
-    <updated>2023-09-23T22:27:00+03:00</updated>
+    <updated>2023-09-23T23:11:33+03:00</updated>
   
     <id>http://localhost:4000/posts/multilingual/</id>
     <content src="http://localhost:4000/posts/multilingual/" />
@@ -51,7 +92,7 @@
       SheHacks Intervarsity CTF
 
 Over the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya 
-whith my school’s CTF team @Dumb31d0r3
+whith my school’s CTF team @Dumb1d0r3♾️🟰♾️
 
 
 I and my team solved some few challenges and we had fun playing and learning.
@@ -61,8 +102,7 @@ I’ll take you through some of the challenges we solved.
 Android
 Multilingual
 The first challenge was called Multilingual and was pretty easy.
-
-I c...
+...
     </summary>
   
 
@@ -210,57 +250,6 @@ Solution
 In this challenge, we shall learn how to read CSR(certificate signing requests) using openssl
 OpenSSL is a widely-used cryptographic library that includes a command-line tool for working with CSRs.
 Let’s solve this cha...
-    </summary>
-  
-
-  </entry>
-
-  
-  <entry>
-    <title>Pico CTF (HideToSee)</title>
-    <link href="http://localhost:4000/posts/HideToSee/" rel="alternate" type="text/html" title="Pico CTF (HideToSee)" />
-    <published>2023-05-14T10:46:00+03:00</published>
-  
-    <updated>2023-05-14T10:46:00+03:00</updated>
-  
-    <id>http://localhost:4000/posts/HideToSee/</id>
-    <content src="http://localhost:4000/posts/HideToSee/" />
-    <author>
-      <name>josephkimiri</name>
-    </author>
-
-  
-    
-    <category term="CTFs" />
-    
-    <category term="Cryptography" />
-    
-  
-
-  
-    <summary>
-      
-
-
-
-
-
-      HideToSee
-
-AUTHOR: SUNDAY JACOB NWANYIM
-
-Description
-How about some hide and seek heh?
-Look at this image here.
-
-Solution
-
-This challenge was tricky as it required some forensics and then understanding atbash cipher.
-Let’s get started, shall we?
-
-  Download the given image.
-  As I said, this challenge required some forensics skills.
-  Since the hint said we extract the image, I went to my foren...
     </summary>
   
 
