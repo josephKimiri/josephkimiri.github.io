@@ -4,6 +4,7 @@ icon: fas fa-info-circle
 order: 4
 ---
 
+<<<<<<< HEAD
 ![Profile Picture](/assets/img/logo/avatar.png)
 
 Hello, I'm Joseph Kimiri! <!-- Replace with your name -->
@@ -22,3 +23,7 @@ Feel free to connect with me on social media:
 - [LinkedIn](https://linkedin.com/in/joseph-kimiri)
 
 If you have any questions or just want to say [hi](mailto:mashkimiri2k@gmail.com).
+=======
+> Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page.
+{: .prompt-tip }
+>>>>>>> v7.3.1
