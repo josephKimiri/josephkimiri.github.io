@@ -1,24 +1,11 @@
-/*
-* Mainly scss modules, only imported to `assets/css/main.scss`
-*/
-
-/* ---------- scss placeholder --------- */
+@use 'variables' as v;
+@use 'mixins' as mx;
 
 %heading {
   color: var(--heading-color);
   font-weight: 400;
-  font-family: $font-family-heading;
-}
-
-%section {
-  #core-wrapper & {
-    margin-top: 2.5rem;
-    margin-bottom: 1.25rem;
-
-    &:focus {
-      outline: none; /* avoid outline in Safari */
-    }
-  }
+  font-family: v.$font-family-heading;
+  scroll-margin-top: 3.5rem;
 }
 
 %anchor {
@@ -44,7 +31,10 @@
 }
 
 %tag-hover {
+  @extend %link-color;
+
   background: var(--tag-hover);
+  border-color: var(--tag-hover);
   transition: background 0.35s ease-in-out;
 }
 
@@ -69,12 +59,13 @@
 }
 
 %clickable-transition {
-  transition: color 0.35s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 %no-cursor {
   -webkit-user-select: none;
   -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -91,7 +82,7 @@
 }
 
 %rounded {
-  border-radius: 6px;
+  border-radius: v.$radius-lg;
 }
 
 %img-caption {
@@ -106,58 +97,67 @@
 }
 
 %sidebar-links {
-  color: rgba(117, 117, 117, 0.9);
+  color: var(--sidebar-muted-color);
   -webkit-user-select: none;
   -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
-/* ---------- scss mixin --------- */
-
-@mixin no-text-decoration {
-  text-decoration: none;
+%text-clip {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
-@mixin mt-mb($value) {
-  margin-top: $value;
-  margin-bottom: $value;
+%text-ellipsis {
+  @include mx.text-ellipsis;
 }
 
-@mixin ml-mr($value) {
-  margin-left: $value;
-  margin-right: $value;
+%text-highlight {
+  color: var(--text-muted-highlight-color);
+  font-weight: 600;
 }
 
-@mixin pl-pr($val) {
-  padding-left: $val;
-  padding-right: $val;
+%text-sm {
+  font-size: 0.85rem;
 }
 
-@mixin input-placeholder {
-  opacity: 0.6;
+%text-xs {
+  font-size: 0.8rem;
 }
 
-@mixin label($font-size: 1rem, $font-weight: 600, $color: var(--label-color)) {
-  color: $color;
-  font-size: $font-size;
-  font-weight: $font-weight;
-}
-
-@mixin align-center {
-  position: relative;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  transform: translateX(-50%);
-}
-
-@mixin prompt($type, $fa-content, $fa-style: 'solid') {
-  &.prompt-#{$type} {
-    background-color: var(--prompt-#{$type}-bg);
-
-    &::before {
-      content: $fa-content;
-      color: var(--prompt-#{$type}-icon-color);
-      font: var(--fa-font-#{$fa-style});
-    }
+%sup-fn-target {
+  &:target {
+    background-color: var(--footnote-target-bg);
+    width: -moz-fit-content;
+    width: -webkit-fit-content;
+    width: fit-content;
+    transition: background-color 1.75s ease-in-out;
   }
+}
+
+%btn-color {
+  button i {
+    color: #999999;
+  }
+}
+
+%code-snippet-bg {
+  background-color: var(--highlight-bg-color);
+}
+
+%code-snippet-padding {
+  padding-left: 1rem;
+  padding-right: 1.5rem;
+}
+
+%max-w-100 {
+  max-width: 100%;
+}
+
+%panel-border {
+  border-left: 1px solid var(--main-border-color);
 }

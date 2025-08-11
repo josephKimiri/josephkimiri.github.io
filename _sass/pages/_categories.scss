@@ -1,20 +1,34 @@
-/*
-  Style for Tab Categories
-*/
+@use '../abstracts/variables' as v;
+@use '../abstracts/placeholders';
 
-%category-icon-color {
+%-category-icon-color {
   color: gray;
 }
 
 .categories {
   margin-bottom: 2rem;
+  border-color: var(--categories-border);
+
+  &.card,
+  .list-group {
+    @extend %rounded;
+  }
 
   .card-header {
-    padding-right: 12px;
+    $radius: calc(v.$radius-lg - 1px);
+
+    padding: 0.75rem;
+    border-radius: $radius;
+    border-bottom: 0;
+
+    &.hide-border-bottom {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
 
   i {
-    @extend %category-icon-color;
+    @extend %-category-icon-color;
 
     font-size: 86%; /* fontawesome icons */
   }
@@ -27,6 +41,10 @@
     &:first-child {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
+    }
+
+    &:last-child {
+      border-bottom: 0;
     }
   }
 } /* .categories */
@@ -42,9 +60,7 @@
     position: relative;
     height: 0.7rem;
     width: 1rem;
-    transition: -webkit-transform 300ms ease;
     transition: transform 300ms ease;
-    transition: transform 300ms ease, -webkit-transform 300ms ease;
   }
 
   &:hover {
@@ -62,6 +78,5 @@
 }
 
 .rotate {
-  -webkit-transform: rotate(-90deg);
   transform: rotate(-90deg);
 }
