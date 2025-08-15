@@ -1,9 +1,9 @@
 
 
 {
-  "name": "JosephKimiri's Blog",
-  "short_name": "JosephKimiri's Blog",
-  "description": "My name is Joseph Kimiri, a passionate individual immersed in the world of cybersecurity. As a CTF player, I thrive in the challenge of hacking, defending, and analyzing computer systems and networks. With a bug bounty hunter mindset, I actively seek out vulnerabilities in software, websites, and applications, helping organizations strengthen their security posture. Armed with my expertise in penetration testing, I conduct thorough assessments, pinpointing weaknesses and providing recommendations for fortifying defenses. In the realm of cybersecurity, I am a relentless protector of digital assets, dedicated to ensuring safety and preserving integrity.",
+  "name": "j053's playground",
+  "short_name": "j053's playground",
+  "description": "CTFs, Bugbounty, Red Teaming, Pentests, Cybersecurity.",
   "icons": [
     {
       "src": "/assets/img/favicons/android-chrome-192x192.png",

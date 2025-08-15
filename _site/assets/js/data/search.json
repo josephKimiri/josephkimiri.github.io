@@ -1,275 +1,139 @@
 [
-  
+  {
+    "title": "Injector",
+    "url": "/posts/blind-SQLi/",
+    "categories": "writeups, Web",
+    "tags": "Chasing Flags Arise CTF, ctfs, Blind SQLi",
+    "date": "2025-08-11 11:04:00 +0300",
+    "content": "Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted w..."
+  },
   {
     "title": "Exploiting exposed SVN folder for Account Takeover",
     "url": "/posts/svn/",
     "categories": "Bugbounty, Web",
     "tags": "Bugbounty, cybersecurity",
     "date": "2024-03-17 21:11:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeoverWhat is Subversion?Subversion, often referred to as SVN, is a centralized version control system that was initially r...",
-    "content": "Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeoverWhat is Subversion?Subversion, often referred to as SVN, is a centralized version control system that was initially released in 2000. It is developed and maintained by the web server software platform Apache. Unlike Git, which operates on a distributed model, SVN functions as a centralized system and is also open source.Key Features of SVN:  Utilizes a central repository to securely house code alterations and preserve all iterations of a project.  Requires developers to check out code from the central repository, make modifications, and subsequently check their changes back into the repository.  Provides comprehensive directory versioning, versioned metadata (properties), consistent data management, and enables contributor management for controlling revision access.Subversion shares similarities with an earlier version control system called Concurrent Versions System (CVS), albeit with enhancements. SVN is noted for its improved speed and expanded feature set compared to CVS.Now to the interesting part….Recently, I embarked on an exploration that led me to a misconfigured instance of Subversion (SVN) lurking at https://example.com/.svn/. What ensued was a journey that underscored the critical importance of robust security practices and the potential consequences of overlooking seemingly innocuous flaws.The DiscoveryWhile conducting routine reconnaissance, my attention was drawn to https://example.com/.svn/, a seemingly innocuous directory. Upon further investigation, I discovered that it exposed the entire source code repository of the website. This misconfiguration left the proverbial keys to the kingdom dangling in plain sight, inviting exploitation.To find endpoints, I normally fuzz my targets with my to go tools like ffuf, dirb and other good tools hand in hand with a good wordlist to find hidden parameters.Today, I did not fuzz but rather used a web extension to find the .svn endpoint. Use the folloeing link to download the extension.Exploiting the VulnerabilityNow, that I had found the misconfigured instance, what next?I headed over to google to try find other blogs and security reports about how exposed .svn folders can be used to reconstruct the source code of the applications.I ended up landing on an open source tool that helped me download the entire source code of my target.With access to the source code repository, I began sifting through the codebase, scouring for potential vulnerabilities. To my dismay, I stumbled upon a treasure trove of security oversights. Nestled within the code were hardcoded credentials for accessing the admin portal—a glaring oversight with profound implications.The Admin Portal TakeoverArmed with the newfound credentials, I infiltrated the admin portal with ease, gaining unrestricted access to sensitive data and critical functionalities. What I uncovered was deeply troubling: the admin portal exposed personally identifiable information (PII) of users, posing a significant privacy risk. Moreover, lax security measures enabled me to reroute payments and manipulate transactions with ease.I was able to access the accounts balance and change the payment details of the account.Responsible DisclosureDisclaimer: Before proceeding with any actions, it’s essential to note that responsible disclosure was adhered to throughout this process. The vulnerabilities discovered were promptly reported to the appropriate team, allowing for remediation measures to be implemented.The ImplicationsThe ramifications of this discovery were profound. The misconfigured instance of SVN served as a gateway to a cascade of security vulnerabilities, culminating in the compromise of the admin portal and the exposure of sensitive PII. This sobering revelation underscores the critical importance of robust security protocols and proactive vulnerability management.Lessons Learned1. Vigilance is KeyRemain vigilant and conduct thorough assessments of all aspects of your digital infrastructure, including seemingly innocuous directories like .svn.2. Practice Secure CodingAvoid hardcoded credentials and prioritize secure coding practices to mitigate the risk of inadvertent exposure.3. Implement Defense-in-DepthAdopt a defense-in-depth approach to cybersecurity, layering multiple security measures to mitigate the impact of potential breaches. i.e If the system had implemented MFA, even with valid creds I would not have succeeded logging in.ConclusionThe journey from discovery to exploitation of the misconfigured SVN instance served as a stark reminder of the ever-present threats lurking in the digital landscape. By remaining vigilant, practicing secure coding, and implementing robust security measures, organizations can safeguard against the perils of subversion and fortify their defenses against cyber threats.Let this case study serve as a beacon of awareness, illuminating the path toward a more secure digital future.Stay tuned for further insights and explorations into the evolving realm of cybersecurity."
+    "content": "Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeover  What is Subversion?   Subversion, often referred to as SVN, is a centralized version control system that was initia..."
   },
-  
   {
     "title": "Multilingual",
     "url": "/posts/multilingual/",
     "categories": "CTFs, Web",
     "tags": "SheHacks Intervarsity CTF, mobile, cybersecurity",
     "date": "2023-09-23 22:27:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "SheHacks Intervarsity CTFOver the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya whith my school’s CTF team @Dumb1d0r3♾️🟰♾️I and my team solved some fe...",
-    "content": "SheHacks Intervarsity CTFOver the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya whith my school’s CTF team @Dumb1d0r3♾️🟰♾️I and my team solved some few challenges and we had fun playing and learning.I’ll take you through some of the challenges we solved.AndroidMultilingualThe first challenge was called Multilingual and was pretty easy.I can’t seem to pick out the hidden message. Can you assit? multilingual.apksolutionI solved this one quite easy. We get an android APK file and we are to find the flag.I first decompile the application with apktool.I then went ahead to grep the strings with words like flag and was able to capture interesting encoded strings.I then went ahead to arrange the identified parts in the order part1,part2,part3 to form ZmxhZ3tDNGxsX00zX011bHQxbDFuZ3U0bH0=This been base64 encoded, I decoded it using echo \"ZmxhZ3tDNGxsX00zX011bHQxbDFuZ3U0bH0\" | base64 -d and we got our flag.That was it for that challenge."
+    "content": "SheHacks Intervarsity CTF  Over the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya  whith my school’s CTF team @Dumb1d0r3♾️🟰♾️   I and my team solved s..."
   },
-  
   {
     "title": "Secured Notes",
     "url": "/posts/Secured-Notes/",
     "categories": "CTFs, Web",
     "tags": "SheHacks Intervarsity CTF, ctfs, mobile, cybersecurity",
     "date": "2023-09-23 22:27:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "Secured NotesI created an application to retrieve my secrets. Is it realy secured?SecuredNotes.apkSolutionHere, we were given an apkfile and we were tasked into finding whether the app was handling...",
-    "content": "Secured NotesI created an application to retrieve my secrets. Is it realy secured?SecuredNotes.apkSolutionHere, we were given an apkfile and we were tasked into finding whether the app was handling secrets well. I decompiled the app using apktool using the command apktool d SecuredNotes.apkI then went into the folder containing the application and grepped for the key words secret &amp; flagWe get a base64 like string DQkYFA8aWxkBCFUdQBAtHB8XWgseACtGXgURNBZKEAZBGxgY, but after decoding it we realize it is messed up somehow.We then grep for secret and we immediately get a hit.Trying to decode it, we get a string ekortsyek that initially I thought was the password for the notes app.Now we need a script to help us read the flag and secret.#!/usr/bin/python3import base64def decode_base64(data):    return base64.b64decode(data).decode('utf-8')def xor_strings(s1, s2):    return ''.join(chr(a ^ b) for a, b in zip(s1, s2))decoded_secret = decode_base64(\"ZWtvcnRzeWVr\")[::-1]decoded_flag = decode_base64(\"DQkYFA8aWxkBCFUdQBAtHB8XWgseACtGXgURNBZKEAZBGxgY\")flag = xor_strings(decoded_flag.encode('utf-8'), (decoded_secret * len(decoded_flag)).encode('utf-8'))print(flag)          Running the script, we get our flag.I was not able to solve the other Android challenges during the CTF but will definitely look into them later."
+    "content": "Secured Notes I created an application to retrieve my secrets. Is it realy secured? SecuredNotes.apk  Solution Here, we were given an apkfile and we were tasked into finding whether the app was han..."
   },
-  
   {
     "title": "Graph1",
     "url": "/posts/Graph1/",
     "categories": "CTFs, Web",
     "tags": "SheHacks Intervarsity CTF, web-security, APIs",
     "date": "2023-09-23 22:27:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "WebFor the web challenges, I solved one challenge by the name Graph1.Graph1We are given a link and told to find the flag.I was happy I had an opportunity to learn how graphql works. You can learn m...",
-    "content": "WebFor the web challenges, I solved one challenge by the name Graph1.Graph1We are given a link and told to find the flag.I was happy I had an opportunity to learn how graphql works. You can learn more about graphql testing hereWe start by visiting the link and we get the following page that says graphql is running.Playing with the graphql api, we got interesting responses.I then went ahead to dump the schema using the following query: query={__schema{types{name,fields{name}}}} We got the following schema returned.Great, Now we craft a curl command to get us our flag.The command looks like curl -X POST -H \"Content-Type: application/json\" -d '{\"query\":\"{getFlag{id flag}}\"}' http://128.199.47.43:5000/graphqlThis inturn gives us the flag encoded in base64.Decoding the base64 string, we get our flag."
+    "content": "Web  For the web challenges, I solved one challenge by the name Graph1.  Graph1 We are given a link and told to find the flag.  I was happy I had an opportunity to learn how graphql works. You can ..."
   },
-  
   {
     "title": "Pico CTF (ReadMyCert)",
     "url": "/posts/readmycert/",
     "categories": "CTFs, Cryptography",
     "tags": "picoctf, ctfs, cryptography, cybersecurity",
     "date": "2023-05-14 18:33:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "ReadMyCertAUTHOR: SUNDAY JACOB NWANYIMDescriptionHow about we take you on an adventure on exploring certificate signing requestsTake a look at this CSR file hereSolutionIn this challenge, we shall ...",
-    "content": "ReadMyCertAUTHOR: SUNDAY JACOB NWANYIMDescriptionHow about we take you on an adventure on exploring certificate signing requestsTake a look at this CSR file hereSolutionIn this challenge, we shall learn how to read CSR(certificate signing requests) using opensslOpenSSL is a widely-used cryptographic library that includes a command-line tool for working with CSRs.Let’s solve this challenge, shall we?  Download the given readmycert.csr.  Use the file to read the certificates properties.  Let’s view the contents of the certificate by running cat readmycert.csr  Now, lets get all details of the CSR using the command openssl req -in readmycert.csr -noout -text which will display the CSR details, including the subject, organization, common name, and other relevant information.  Lets understand the commands in details.                            Flag/Option: openssl          This is the command-line tool used to perform various cryptographic operations using the OpenSSL library.                                      Flag/Option: req          It is a subcommand of OpenSSL specifically used for working with certificate requests, including CSRs.                                      Flag/Option: -in your_csr_file.csr          This flag specifies the input file for the CSR. Replace your_csr_file.csr with the actual path and filename of your CSR file.                                      Flag/Option: -noout          This flag instructs OpenSSL not to output the actual certificate but only display the CSR’s text representation. It prevents generating any output other than the textual information.                                      Flag/Option: -text          This flag tells OpenSSL to display the CSR details in a human-readable format. It provides a comprehensive view of the CSR’s contents, including the subject’s distinguished name (DN), public key information, and any other attributes included in the request.                      We get our flag in the subject of the certificate.That is it, I hope you learnt a thing or two from this challenge."
+    "content": "ReadMyCert  AUTHOR: SUNDAY JACOB NWANYIM  Description How about we take you on an adventure on exploring certificate signing requests Take a look at this CSR file here  Solution  In this challenge,..."
   },
-  
   {
     "title": "Pico CTF (HideToSee)",
     "url": "/posts/HideToSee/",
     "categories": "CTFs, Cryptography",
     "tags": "picoctf, ctfs, cryptography, cybersecurity",
     "date": "2023-05-14 10:46:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "HideToSeeAUTHOR: SUNDAY JACOB NWANYIMDescriptionHow about some hide and seek heh?Look at this image here.SolutionThis challenge was tricky as it required some forensics and then understanding atbas...",
-    "content": "HideToSeeAUTHOR: SUNDAY JACOB NWANYIMDescriptionHow about some hide and seek heh?Look at this image here.SolutionThis challenge was tricky as it required some forensics and then understanding atbash cipher.Let’s get started, shall we?  Download the given image.  As I said, this challenge required some forensics skills.  Since the hint said we extract the image, I went to my forensics toolkit and chose stegseek.Stegseek is a powerful command-line tool designed to detect and extract hidden messages or data concealed within various digital media files, such as images or audio files. It utilizes a technique called steganography, which involves hiding information within another file without arousing suspicion.  I used stegseek to bruteforce the image by running stegseek atbash.jpg   Lucky us, we find the encrypted text and it is stored in atbash.jpg.out.  Let’s now cat the encrypted text by running cat atbash.jpg.out.  We get an atbash encrypted text. krxlXGU{zgyzhs_xizxp_05y2z65z}The Atbash cipher is a simple substitution cipher that operates by reversing the alphabet. It is one of the oldest known encryption techniques, dating back to ancient times. In this cipher, each letter of the alphabet is replaced with its corresponding letter from the opposite end.  I now head over to cyberchef which is a simple, intuitive web app for analysing and decoding data without having to deal with complex tools or programming languages.  Search for atbash cipher and place your encrypted text on the input box. We finally get our flag. That’s it read my other writeups and hack ethically."
+    "content": "HideToSee  AUTHOR: SUNDAY JACOB NWANYIM  Description How about some hide and seek heh? Look at this image here.  Solution  This challenge was tricky as it required some forensics and then understan..."
   },
-  
   {
     "title": "Pico CTF (Chrono)",
     "url": "/posts/chrono/",
     "categories": "CTFs, Web",
     "tags": "picoctf, ctfs, general, cybersecurity",
     "date": "2023-05-12 20:27:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "ChronoAUTHOR: MUBARAK MIKAILDescriptionHow to automate tasks to run at intervals on linux servers?Use ssh to connect to this server:Server: saturn.picoctf.netPort: 50213Username: picoplayer Passwor...",
-    "content": "ChronoAUTHOR: MUBARAK MIKAILDescriptionHow to automate tasks to run at intervals on linux servers?Use ssh to connect to this server:Server: saturn.picoctf.netPort: 50213Username: picoplayer Password: ekj2GJuiv4SolutionThis was an easy one, It tested ones understanding of directories and linux in general.  First ssh to the challenge using the given creds. The ssh port is different on each spawn so you have to use the port provided after launching the challenge.ssh picoplayer@saturn.picoctf.net -p 50213 -vvvI always append -vvv the -vvv option is used to increase the verbosity level of the SSH client. It enables detailed debugging and provides extensive output, including debugging messages and information about the SSH connection process.After connecting you are logged in as picoplayerNow we have to understand where folders on a linux system are stored  Now use cd ..   Again repeat cd ..  You could also use the command cd ../..  We are now able to see the folders available.  Interesting enough is the challenge folder   Now lets cd challenge and ls -la  We see an intesting dile metadata.json  Now lets cat the metadata.json  And we see our flag."
+    "content": "Chrono  AUTHOR: MUBARAK MIKAIL  Description How to automate tasks to run at intervals on linux servers? Use ssh to connect to this server: Server: saturn.picoctf.net Port: 50213 Username: picoplaye..."
   },
-  
   {
     "title": "Pico CTF (Permissions)",
     "url": "/posts/permissions/",
     "categories": "CTFs, Web",
     "tags": "picoctf, ctfs, web, cybersecurity",
     "date": "2023-05-12 20:22:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "PermissionsAUTHOR: GEOFFREY NJOGUDescriptionCan you read files in the root file?Additional details will be available after launching your challenge instance.After starting the challenge we get more...",
-    "content": "PermissionsAUTHOR: GEOFFREY NJOGUDescriptionCan you read files in the root file?Additional details will be available after launching your challenge instance.After starting the challenge we get more infoThe system admin has provisioned an account for you on the main server:ssh -p 56038 picoplayer@saturn.picoctf.netPassword: Sd9KYTm5krCan you login and read the root file?SolutionRemember the challenge chrono, well this also tests the same concept.  First ssh to the server ssh -p 56038 picoplayer@saturn.picoctf.net  Navigate to root folders cd ../..  We see a folder challenge  On the folder there is a file metadata.json  When we cat the file, we get our flag."
+    "content": "Permissions  AUTHOR: GEOFFREY NJOGU  Description Can you read files in the root file? Additional details will be available after launching your challenge instance.  After starting the challenge we ..."
   },
-  
   {
     "title": "Pico CTF (Money-ware)",
     "url": "/posts/Money-ware/",
     "categories": "CTFs, Web",
     "tags": "picoctf, ctfs, web, cybersecurity",
     "date": "2023-05-12 20:22:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "Money-wareAUTHOR: JUNI19DescriptionFlag format: picoCTF{Malwarename}The first letter of the malware name should be capitalized and the rest lowercase.Your friend just got hacked and has been asked ...",
-    "content": "Money-wareAUTHOR: JUNI19DescriptionFlag format: picoCTF{Malwarename}The first letter of the malware name should be capitalized and the rest lowercase.Your friend just got hacked and has been asked to pay some bitcoins to1Mz7153HMuxXTuR2R1t78mGSdzaAtNbBWX. He doesn’t seem to understand what is going on and asks you for advice. Can you identify what malware he’s being a victim of?SolutionThe name of the challenge was a play with words Money-ware  I translated it to malware .I did a simple google search of the bitcoin address and appended the tag malware at the endgoogle:1Mz7153HMuxXTuR2R1t78mGSdzaAtNbBWX malwareEazy peazy"
+    "content": "Money-ware  AUTHOR: JUNI19  Description Flag format: picoCTF{Malwarename} The first letter of the malware name should be capitalized and the rest lowercase. Your friend just got hacked and has been..."
   },
-  
   {
     "title": "Pico CTF (Useless)",
     "url": "/posts/useless/",
     "categories": "CTFs, Cybersecurity",
     "tags": "picoctf, ctfs, general, cybersecurity",
     "date": "2023-05-12 20:02:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "uselessAUTHOR: LOIC SHEMADescriptionThere’s an interesting script in the user’s home directoryThe work computer is running SSH. We’ve been given a script which performs some basic calculations, exp...",
-    "content": "uselessAUTHOR: LOIC SHEMADescriptionThere’s an interesting script in the user’s home directoryThe work computer is running SSH. We’ve been given a script which performs some basic calculations, explore the script and find a flag.Hostname: saturn.picoctf.netPort:     52202Username: picoplayerPassword: passwordSolutionThis made me a bit mad, I ran into some rabbit holes at first. The challenge was quite fun.Lets get into it then, shall we?  We first ssh into the server ssh -p 52202 picoplayer@saturn.picoctf.net  We get to see an executable file useless  When we run the executable, it tells us to read the code first.  I thus cat the file to read it.  Reading the code I now understand how to run the code  ./useless add 5 5  I notice a very interesting else statement at the end of the if loop  It says Read the Manual ..  I immedietly remembered the linux manual man.In Linux, the man command is used to display the manual pages (documentation) for various commands, programs, and system functions. It provides detailed information about the usage, options, and examples of how to use a particular command or function.  I therefore run man useless and at the end I see the flag."
+    "content": "useless  AUTHOR: LOIC SHEMA  Description There’s an interesting script in the user’s home directory The work computer is running SSH. We’ve been given a script which performs some basic calculation..."
   },
-  
   {
     "title": "Pico CTF (Specialer)",
     "url": "/posts/Specialer/",
     "categories": "CTFs, General",
     "tags": "picoctf, ctfs, general, cybersecurity",
     "date": "2023-05-12 11:50:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "SpecialerAUTHOR: LT ‘SYREAL’ JONES, ET AL.DescriptionReception of Special has been cool to say the least. That’s why we made an exclusive version of Special, called Secure Comprehensive Interface f...",
-    "content": "SpecialerAUTHOR: LT ‘SYREAL’ JONES, ET AL.DescriptionReception of Special has been cool to say the least. That’s why we made an exclusive version of Special, called Secure Comprehensive Interface for Affecting Linux Empirically Rad, or just ‘Specialer’. With Specialer, we really tried to remove the distractions from using a shell. Yes, we took out spell checker because of everybody’s complaining. But we think you will be excited about our new, reduced feature set for keeping you focused on what needs it the most. Please start an instance to test your very own copy of Specialer.ssh -p 59255 ctf-player@saturn.picoctf.net. The password is 483e80d4SolutionThis was a fun challenge, I enjoyed playing this one. Let’s get started, shall we?  First we connect to the server via ssh ssh -p 59255 ctf-player@saturn.picoctf.net   I try using normal linux commands but most of the commands don’t work exept for some.  To list all the commands that the system allows, I press tab twice.  Now, lets try see how we can use the echo command to cat items.  Assuming the flag is in flag.txt, I will need to improvice how I can read the file since the cat command is not available.  The following command echo $(&lt;flag.txt) can be used to print out the contents of flag.txt  Back to the challenge, I now need to figure out where the flag is stored.  I use cd ../.. and press tab twice to execute.  Now, let’s navigate to the home directory to see what is there. cd home/ and again press tab twice to execute.  Here we get into another directory called ctf-player which has several files and folders  Let us try printing the contents of each folder.  I start with the abra folder and cat the contents of the two txt files. echo $(&lt;cadabra.txt)  I then cat cadaniel.txt using echo $(&lt;cadaniel.txt)  I then proceed to the ala folder by backtracking one step, cd ../ala from the current folder.  I then cat the kazam.txt that is there and luckily enough, that file has our flag.Thank you for reading through, hope you learnt something new."
+    "content": "Specialer AUTHOR: LT ‘SYREAL’ JONES, ET AL.  Description Reception of Special has been cool to say the least. That’s why we made an exclusive version of Special, called Secure Comprehensive Interfa..."
   },
-  
   {
     "title": "Pico CTF (Hideme)",
     "url": "/posts/Hideme/",
     "categories": "CTFs, Forensics",
     "tags": "picoctf, ctfs, forensics, cybersecurity",
     "date": "2023-05-12 11:48:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "hidemeAUTHOR: GEOFFREY NJOGUDescriptionEvery file gets a flag.The SOC analyst saw one image been sent back and forth between two people. They decided to investigate and found out that there was mor...",
-    "content": "hidemeAUTHOR: GEOFFREY NJOGUDescriptionEvery file gets a flag.The SOC analyst saw one image been sent back and forth between two people. They decided to investigate and found out that there was more than what meets the eye here.SolutionThis was a fun challenge. I enjoyed it alot, it was an easy one I would say.Lets solve it, shall we?  To begin with Download the file  Use the file command to understand the file strucure and see whether it is actually a png file.  After confirming that the file is actually a png file, we can now try zsteg to find hidden data.  Now let us look for hidden files using foremost , the output of foremost is stored in the output folder.  we are able to retrieve a zip file.  Let us now use 7z to unzip the zip file 7z x 00000077.zip  We get yet another folder secret   Getting into the folder, we are able to retrieve another image that has a flag written in it.  Opening the flag.png using xdg-open flag.png we get the flag  I recommend using online string extractors to extract the flag."
+    "content": "hideme  AUTHOR: GEOFFREY NJOGU  Description Every file gets a flag. The SOC analyst saw one image been sent back and forth between two people. They decided to investigate and found out that there w..."
   },
-  
   {
     "title": "PcapPoisoning",
     "url": "/posts/PcapPoisoning/",
     "categories": "CTFs, Forensics",
     "tags": "picoctf, ctfs, forensics, cybersecurity",
     "date": "2023-05-12 11:45:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "PcapPoisoningAUTHOR: MUBARAK MIKAILDescriptionHow about some hide and seek heh?Download this file and find the flag.Solution  This challenge was pretty easy, Download the packet capture file  Then ...",
-    "content": "PcapPoisoningAUTHOR: MUBARAK MIKAILDescriptionHow about some hide and seek heh?Download this file and find the flag.Solution  This challenge was pretty easy, Download the packet capture file  Then even without firing wireshark, we use strings and grep and look for the flag format picoCTF{}strings trace.pcap | grep -E \"pico\"  We immedietely get the flag.Eazy Peazy"
+    "content": "PcapPoisoning  AUTHOR: MUBARAK MIKAIL  Description How about some hide and seek heh? Download this file and find the flag.  Solution    This challenge was pretty easy, Download the packet capture f..."
   },
-  
   {
     "title": "MatchTheRegex",
     "url": "/posts/matchtheregex/",
     "categories": "CTFs, Web",
     "tags": "picoctf, ctfs, web, cybersecurity",
     "date": "2023-05-12 11:35:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "MatchTheRegexHow about trying to match a regular expressionThe website is running here.Solution  First we access the challenge using the provided url.  We then get a web page asking for a valid inp...",
-    "content": "MatchTheRegexHow about trying to match a regular expressionThe website is running here.Solution  First we access the challenge using the provided url.  We then get a web page asking for a valid input with input being parsed through a text box.  Now, lets try random strings.  The next step would be checking the source code to understand how the input is parsed.  Press ctrl+u to view page source.  Navigate to the javascript where the logic is coded.  The code has a function send_request() which retrieves the value entered in the input field with the id “name”, it then sends it as a query parameter in a fetch request to the /flag endpoint, and displays the value of the “flag” property from the response in an alert box.  As the title suggests, the input should match a particular regex to pop out the flag.  Checking the code again, we get a javascript comment that shows the regex ^p.....F!?   The comment shows a regex of a string with 8 characters that starts with p and ends with F and the ! is optional.  I then come up with a random string piqwerF that I use to pop out the flag.Eazy Peazy. Remember to stay vigilant in the digital wild west. Happy Hacking."
+    "content": "MatchTheRegex  How about trying to match a regular expression The website is running here.  Solution    First we access the challenge using the provided url.   We then get a web page asking for a v..."
   },
-  
   {
     "title": "SOAP",
     "url": "/posts/soap/",
     "categories": "CTFs, Web",
     "tags": "picoctf, ctfs, web, cybersecurity",
     "date": "2023-05-12 11:06:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "SOAPCHALLENGE AUTHOR: GEOFFREY NJOGUDescriptionThe web project was rushed and no security assessment was done. Can you read the /etc/passwd file?Web PortalSolutionWell this challenge reminded me of...",
-    "content": "SOAPCHALLENGE AUTHOR: GEOFFREY NJOGUDescriptionThe web project was rushed and no security assessment was done. Can you read the /etc/passwd file?Web PortalSolutionWell this challenge reminded me of LFI (local File Inclusion). It was an interesting challenge, I loved it.Let’s get started, shall we?  Connect to the challenge via the provided url.  It looks very much static, I try the Detail buttons to check what they load and I proxy my requests through burp.  We get a path /data that appends an xml code snippet with the id parameter.  I immediately start crafting xml PoCs to dump the /etc/passwd  I come up with&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt;&lt;!DOCTYPE data [  &lt;!ENTITY readfile SYSTEM \"file:///etc/passwd\"&gt;]&gt;&lt;data&gt;  &lt;ID&gt;&amp;readfile;&lt;/ID&gt;&lt;/data&gt;  I remove the existing xml and replace it with my crafted xml.  Sending the request, we get a response dumping the /etc/passwd and at the end of it we get our flag.That is it. Stay vigilant in the digital wild west. Happy Hacking"
+    "content": "SOAP  CHALLENGE AUTHOR: GEOFFREY NJOGU  Description The web project was rushed and no security assessment was done. Can you read the /etc/passwd file? Web Portal  Solution Well this challenge remin..."
   },
-  
   {
     "title": "Pico CTF (Special)",
     "url": "/posts/Special/",
     "categories": "CTFs, Web",
     "tags": "picoctf, ctfs, general, cybersecurity",
     "date": "2023-05-12 11:06:00 +0300",
-    
-
-
-
-
-
-    
-    "snippet": "SpecialAUTHOR: LT ‘SYREAL’ JONESDescriptionDon’t power users get tired of making spelling mistakes in the shell? Not anymore! Enter Special, the Spell Checked Interface for Affecting Linux. Now, ev...",
-    "content": "SpecialAUTHOR: LT ‘SYREAL’ JONESDescriptionDon’t power users get tired of making spelling mistakes in the shell? Not anymore! Enter Special, the Spell Checked Interface for Affecting Linux. Now, every word is properly spelled and capitalized… automatically and behind-the-scenes! Be the first to test Special in beta, and feel free to tell us all about how Special streamlines every development process that you face. When your co-workers see your amazing shell interface, just tell them: That’s Special (TM)Start your instance to see connection details.ssh -p 51065 ctf-player@saturn.picoctf.netThe password is d8819d45SolutionThis was a real rollercosta I have to say. The hint guided me on this challengehint:Experiment with different shell syntax  ssh to the server ssh -p 51065 ctf-player@saturn.picoctf.net  After logging in, I realized we can’t run normal commands as they are jumbled somehow.  I immedietely run to google and I had a chance to learn a lot about shell syntax, my friend @noamgariani11 really did come up to my rescue on this one.  I followed a syntax noamgariani11 had suggested ${parameter?ls}\t ${parameter={command}}The syntax ${parameter='command_here'} is used for parameter expansion in shell scripting. It assigns a default value to the variable parameter if it is not already set.Learning about this new syntax , I jumped back to the challenge.  I started with listing available folders or files and sequentially followed the following table            Command      Output                  ${parameter?ls}      parameter: ls              ${:ls}      Bad substitution              ${parameter=ls}      blargh              ${parameter=cat blargh}      cat: blargh: Is a directory              ${parameter=cd blargh}      ${parameter=cd blargh}              ${parameter=ls blargh}      flag.txt              ${parameter=cat &lt; blargh/flag.txt}      This gave the flag      Special thanks to noamgariani11 for helping me solve this one. I learnt alot from the challenge."
+    "content": "Special AUTHOR: LT ‘SYREAL’ JONES  Description Don’t power users get tired of making spelling mistakes in the shell? Not anymore! Enter Special, the Spell Checked Interface for Affecting Linux. Now..."
   }
   
 ]

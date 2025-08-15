@@ -1,23 +1,22 @@
 ---
 title: Injector
-author: josephkimiri
+author: j053
 date: 2025-08-11 11:04:00 +0300
-categories: [CTFs, Web]
-tags: [Chasing Flags Arise CTF, ctfs, ]
-render_with_liquid: false
+categories: [writeups, Web]
+tags: [Chasing Flags Arise CTF, ctfs, Blind SQLi ]
 image: /assets/img/blog/arise.png
 ---
 
 
-Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory.
+Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted way.
 
-To begin, the challenge description (paraphrase) essentially stated: "Chain the vulnerabilities to obtain the flag."
+To begin, the challenge description (paraphrased) essentially stated: "Chain the vulnerabilities to obtain the flag."
 
 When we visit the given link (http://52.209.211.118:6004/) we are presented with a login page.
 
 I attempted multiple login bypass techniques including SQLi payloads like `'or 1=1-- -`  but each attempt resulted in a `Connection error.` message.
 
-After some thought, the only logical next step was to brute-force the login. Why? Because it was the last trick I had left in my toolkit.
+After some thought, the only logical next step was to brute-force the login. Why? Because it was the last trick I had left in my toolkit. (Turns out from the official writeup, we needed to use LDAP injection for authentication bypass)
 
 
 So, I fired up `hydra`, though if you have the Pro version of Burp Suite, you could just as well use Burp Intruder.
@@ -128,4 +127,4 @@ Table: secrets
 ➜
 ```
 
-That was it. I was happy to have blooded the challenge..cheers to the author, Now where is my 3K??
+That was it. I was happy to have blooded the challenge..cheers to the author, I got the 3k plus airtime...thanks Chasingflags for the awesome CTF.

