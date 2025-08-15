@@ -55,8 +55,14 @@ webmaster_verifications:
 
 # ↑ --------------------------
 # The end of `jekyll-seo-tag` settings
+# Add this to override Chirpy's default feed
+# Disable Chirpy's built-in feed
+feed:
+  disable: true
 
-# Web Analytics Settings
+# Explicitly configure jekyll-feed
+jekyll-feed:
+  path: "feed.xml"
 analytics:
   google:
     id: # fill in your Google Analytics ID
@@ -149,7 +155,7 @@ pwa:
 paginate: 10
 
 # The base URL of your site
-baseurl: "https://josephkimiri.github.io/josephkimiri.github.io" # the base URL of your site, e.g. 'https://username.github.io/repo-name'
+baseurl: "" # the base URL of your site, e.g. 'https://username.github.io/repo-name'
 
 # ------------ The following options are not recommended to be modified ------------------
 
