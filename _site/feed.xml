@@ -4,7 +4,7 @@
   <id>http://localhost:4000/</id>
   <title>j053's playground</title>
   <subtitle>CTFs, Bugbounty, Red Teaming, Pentests, Cybersecurity.</subtitle>
-  <updated>2025-08-15T12:17:09+03:00</updated>
+  <updated>2025-08-15T12:43:56+03:00</updated>
   <author>
     <name>j053</name>
     <uri>http://localhost:4000/</uri>
@@ -200,7 +200,7 @@ I then went into the folder containing the application and grepped for the key w
     <link href="http://localhost:4000/posts/Graph1/" rel="alternate" type="text/html" title="Graph1" />
     <published>2023-09-23T22:27:00+03:00</published>
   
-    <updated>2023-09-23T22:27:00+03:00</updated>
+    <updated>2025-08-15T12:29:55+03:00</updated>
   
     <id>http://localhost:4000/posts/Graph1/</id>
     <content src="http://localhost:4000/posts/Graph1/" />
