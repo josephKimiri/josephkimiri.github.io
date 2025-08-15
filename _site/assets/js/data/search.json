@@ -5,7 +5,7 @@
     "categories": "writeups, Web",
     "tags": "Chasing Flags Arise CTF, ctfs, Blind SQLi",
     "date": "2025-08-11 11:04:00 +0300",
-    "content": "Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted w..."
+    "content": "Unintended Solution – CTF Challenge Write-up     Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this fro..."
   },
   {
     "title": "Exploiting exposed SVN folder for Account Takeover",

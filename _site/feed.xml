@@ -4,7 +4,7 @@
   <id>http://localhost:4000/</id>
   <title>j053's playground</title>
   <subtitle>CTFs, Bugbounty, Red Teaming, Pentests, Cybersecurity.</subtitle>
-  <updated>2025-08-15T12:55:32+03:00</updated>
+  <updated>2025-08-15T13:26:20+03:00</updated>
   <author>
     <name>j053</name>
     <uri>http://localhost:4000/</uri>
@@ -29,7 +29,7 @@
     <id>http://localhost:4000/posts/blind-SQLi/</id>
     <content src="http://localhost:4000/posts/blind-SQLi/" />
     <author>
-      <name>j053</name>
+      <name>josephkimiri</name>
     </author>
 
   
@@ -48,11 +48,23 @@
 
 
 
-      Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted way.
+      Unintended Solution – CTF Challenge Write-up
 
-To begin, the challenge description (paraphrased) essentially stated: “Chain the vulnerabilities to obtain the flag.”
 
-When we visit the given link (http://52.209.211.118:6004/) we are presented ...
+  Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this from memory.
+Note: Solved using an unintended method.
+
+
+
+
+Challenge Summary
+The challenge description (paraphrased) stated:
+
+
+  “Chain the vulnerabilities to obtain the flag.”
+
+
+When visiting the provide...
     </summary>
   
 

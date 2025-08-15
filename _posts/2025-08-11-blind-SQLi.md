@@ -1,6 +1,6 @@
 ---
 title: Injector
-author: j053
+author: josephkimiri
 date: 2025-08-11 11:04:00 +0300
 categories: [writeups, Web]
 tags: [Chasing Flags Arise CTF, ctfs, Blind SQLi ]
@@ -8,24 +8,54 @@ image: /assets/img/blog/arise.png
 ---
 
 
-Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this write-up from memory. NB: Solved using the uninted way.
+## Unintended Solution – CTF Challenge Write-up
 
-To begin, the challenge description (paraphrased) essentially stated: "Chain the vulnerabilities to obtain the flag."
+> *Apologies for publishing this write-up after the CTF. The challenge creators have since taken the challenges offline, so I’ll be recreating this from memory.*  
+> **Note:** Solved using an unintended method.
 
-When we visit the given link (http://52.209.211.118:6004/) we are presented with a login page.
+---
 
-I attempted multiple login bypass techniques including SQLi payloads like `'or 1=1-- -`  but each attempt resulted in a `Connection error.` message.
+### Challenge Summary
+The challenge description (paraphrased) stated:
 
-After some thought, the only logical next step was to brute-force the login. Why? Because it was the last trick I had left in my toolkit. (Turns out from the official writeup, we needed to use LDAP injection for authentication bypass)
+> *"Chain the vulnerabilities to obtain the flag."*
 
+When visiting the provided [challenge link](http://52.209.211.118:6004/), we were presented with a **login page**.
 
-So, I fired up `hydra`, though if you have the Pro version of Burp Suite, you could just as well use Burp Intruder.
+---
 
-As you probably know, having a valid username makes the job much easier. In most web applications, there’s a good chance you’ll find a default username like `Administrator` or `admin`. In our case, I was fortunate in guessing `admin` and it worked on the first try, and the password was hidden behind five asterisks `*****`.
+### Initial Attempts
+I started by testing common login bypass techniques, such as:
+
+```sql
+'or 1=1-- -
+```
+However, each attempt resulted in a Connection error. message.
+
+### Changing Approach
+
+After some thought, the next logical step was brute-forcing the login.
+Why? Because at that point, it was the only card left in my deck.
+
+>> According to the official [write-up](https://blog.chasingflags.co.ke/guides/injector/), the intended approach was to use LDAP injection to bypass authentication.
+
+### I decided to brute-forcing the Login
+
+I used hydra for the brute force attack, but if you have Burp Suite Pro, you could achieve the same with Burp Intruder.
+
+As you might know, having a valid username significantly increases the success rate.
+In many web applications, default usernames like Administrator or admin are common.
+
+In this case, I guessed admin — and it worked on the first try.
+The password was masked behind five asterisks:
+
+```md
+*****
+```
 
 ![simulation of how hydra is used for bruteforcing Login pages](/assets/img/blog/image.png)
 
-With that password, I logged in as admin. 
+With that password, I logged in as admin. `Image Courtesy of my friends Michael Khanda & c1ph3rbnuk cause I did not take any`
 
 Here, we are given an input field to change the Access ID,
 
@@ -37,7 +67,7 @@ After experimenting with a few payloads, including XSS and SSTI, I discovered th
 
 Next, it was time for `sqlmap` to come to the rescue. Initially, I ran into issues with sqlmap failing to detect the backend DBMS though it eventually picked the `sqlite` database.
 
-I first saved the request as a req.txt file to carry with me the aythentication tokens.
+I first saved the request as a `req.txt` file to carry with me the authentication tokens.
 
 ![req.txt](/assets/img/blog/image-3.png)
 
@@ -126,5 +156,7 @@ Table: secrets
 
 ➜
 ```
+{: .nolineno }
+
 
 That was it. I was happy to have blooded the challenge..cheers to the author, I got the 3k plus airtime...thanks Chasingflags for the awesome CTF.
